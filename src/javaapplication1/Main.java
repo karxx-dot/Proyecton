@@ -34,6 +34,7 @@ public class Main extends javax.swing.JFrame {
 
         header2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
+        sp.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setViewportView(form_Home1);
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);

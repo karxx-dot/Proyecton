@@ -28,7 +28,7 @@ listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "prestamos", 
 listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Cobros", Model_menu.MenuType.MENU));
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
 
-listMenu1.addItem(new Model_menu("", "My Data", Model_menu.MenuType.TITLE));
+listMenu1.addItem(new Model_menu("", "Datos", Model_menu.MenuType.TITLE));
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
 listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "reportes", Model_menu.MenuType.MENU));
 listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "caja", Model_menu.MenuType.MENU));

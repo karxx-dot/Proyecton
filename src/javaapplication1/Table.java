@@ -6,6 +6,7 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 
 public class Table extends JTable{
@@ -39,12 +40,20 @@ if(i1 !=4){
         com.setForeground(new Color(102,102,102));
     }
     return com;
+}else{
+    StatusType type=(StatusType)o;
+    CellStatus cell = new CellStatus(type);
+    return cell;
 }
-            return new JLabel("Testing");
+            
             }
             
         });
+        
     }
-     
+    public void addRow(Object[] row){
+            DefaultTableModel model =(DefaultTableModel)getModel();
+            model.addRow(row);
+    }  
     
 }
