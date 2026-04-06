@@ -21,20 +21,20 @@ public class menu extends javax.swing.JPanel {
         listMenu1.setOpaque(false);
     }
 private void init(){
-listMenu1.addItem(new Model_menu("iconfinder-computer-4341285_120548", "Dashboard", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "UI Elements", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Comonents", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Forms Stuff", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Date Table", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-computer-4341285_120548", "Inicio", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Clientes", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "simulador", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "prestamos", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Cobros", Model_menu.MenuType.MENU));
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
 
 listMenu1.addItem(new Model_menu("", "My Data", Model_menu.MenuType.TITLE));
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Icons", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Sample Page", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Extra", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "More", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Logout", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "reportes", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "caja", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Usuarios", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Ajustes", Model_menu.MenuType.MENU));
+listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "", Model_menu.MenuType.MENU));
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
     
 }
