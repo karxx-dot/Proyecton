@@ -12,13 +12,56 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.JFrame;
 
 public class menu extends javax.swing.JPanel {
-
+  
    
     public menu() {
         initComponents();
         setOpaque(false);
         init();
         listMenu1.setOpaque(false);
+    }
+ 
+
+        private boolean collapsed = false;
+    private javax.swing.Timer animTimer;
+    private int currentWidth = 200;
+    private final int EXPANDED_WIDTH = 200;
+    private final int COLLAPSED_WIDTH = 70;
+
+    public void toggleVisibility() {
+        collapsed = !collapsed;
+        int targetWidth = collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH;
+
+        if (collapsed) {
+            jLabel1.setText("");
+        }
+
+        if (animTimer != null && animTimer.isRunning()) {
+            animTimer.stop();
+        }
+
+        animTimer = new javax.swing.Timer(5, null);
+        animTimer.addActionListener(e -> {
+            if (collapsed) {
+                currentWidth -= 15;
+                if (currentWidth <= targetWidth) {
+                    currentWidth = targetWidth;
+                    animTimer.stop();
+                }
+            } else {
+                currentWidth += 15;
+                if (currentWidth >= targetWidth) {
+                    currentWidth = targetWidth;
+                    jLabel1.setText("Aplicacion");
+                    animTimer.stop();
+                }
+            }
+            setPreferredSize(new java.awt.Dimension(currentWidth, getHeight()));
+            revalidate();
+            repaint();
+        });
+
+        animTimer.start();
     }
 private void init(){
 listMenu1.addItem(new Model_menu("iconfinder-computer-4341285_120548", "Inicio", Model_menu.MenuType.MENU));
@@ -38,7 +81,8 @@ listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "", Model_men
 listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
     
 }
-   
+
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

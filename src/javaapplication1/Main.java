@@ -13,7 +13,11 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         setBackground(new Color (0,0,0,0));
         menu3.initMoving(Main.this);
-        
+           header2.setMenuToggleListener(() -> {
+        menu3.toggleVisibility();
+        panelBorder1.revalidate();
+        panelBorder1.repaint();
+    });
        sp.setVerticalScrollBar(new JScrollBar());
     }
 

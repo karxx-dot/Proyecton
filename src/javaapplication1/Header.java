@@ -12,6 +12,22 @@ public class Header extends javax.swing.JPanel {
     public Header() {
         initComponents();
         setOpaque(false);
+            jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (menuToggleListener != null) {
+                    menuToggleListener.onToggle();
+                }
+            }
+        });
+    }
+        public interface MenuToggleListener {
+        void onToggle();
+    }
+    private MenuToggleListener menuToggleListener;
+    public void setMenuToggleListener(MenuToggleListener listener) {
+        this.menuToggleListener = listener;
     }
 
  
