@@ -103,8 +103,15 @@ public class Main extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
+java.awt.EventQueue.invokeLater(() -> new javaapplication1.login.LoginForm().setVisible(true));   
     }
+    
+    private void IniciarActionPerformed(java.awt.event.ActionEvent evt) {                                        
+    // ✅ AGREGADO INICIA
+    new Main().setVisible(true);
+    this.dispose();
+    // ✅ AGREGADO TERMINA
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javaapplication1.Form_Home form_Home1;
