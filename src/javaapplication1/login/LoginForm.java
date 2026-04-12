@@ -113,7 +113,7 @@ public class LoginForm extends javax.swing.JFrame {
 
         usuario.addActionListener(this::usuarioActionPerformed);
 
-        Tipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Empleado", "Cliente" }));
+        Tipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Empleado", "Cliente", "Usuario", " " }));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -165,8 +165,9 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(Tipo)
                         .addGap(4, 4, 4)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel4.setBackground(new java.awt.Color(153, 153, 153));

@@ -223,8 +223,9 @@
                               <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel7" min="-2" pref="36" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -278,10 +279,12 @@
             <Component class="javax.swing.JComboBox" name="Tipo">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="3">
+                  <StringArray count="5">
                     <StringItem index="0" value="Admin"/>
                     <StringItem index="1" value="Empleado"/>
                     <StringItem index="2" value="Cliente"/>
+                    <StringItem index="3" value="Usuario"/>
+                    <StringItem index="4" value=" "/>
                   </StringArray>
                 </Property>
               </Properties>
