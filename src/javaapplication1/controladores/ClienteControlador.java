@@ -26,14 +26,12 @@ public class ClienteControlador {
         String telefono = vista.getTelefono();
         String email = vista.getEmail();
 
-        // Validaciones
         if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(vista, "⚠️ Por favor, completa todos los campos.", 
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Verificar si la cédula ya existe
         for (int i = 0; i < vista.getTableModel().getRowCount(); i++) {
             if (vista.getTableModel().getValueAt(i, 0).toString().equals(cedula)) {
                 JOptionPane.showMessageDialog(vista, "⚠️ La cédula ya existe.", 
@@ -42,7 +40,6 @@ public class ClienteControlador {
             }
         }
 
-        // Agregar fila a la tabla
         Object[] fila = {cedula, nombre, telefono, email};
         vista.agregarFilaTabla(fila);
         

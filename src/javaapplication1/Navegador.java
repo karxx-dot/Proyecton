@@ -8,7 +8,6 @@ public class Navegador {
     private CardLayout cardLayout;
     private JPanel panelContenido;
 
-    // ← Guardar referencia al scroll del simulador
     private JScrollPane scrollSimulador;
 
     private Navegador() {}
@@ -33,7 +32,6 @@ public class Navegador {
 
         javaapplication1.vistas.GestionClientesUI.agregarObservador(prestamos);
 
-        // ← Guardar el scroll del simulador para resetearlo después
         scrollSimulador = wrapScroll(simulador);
 
         panelContenido.add(inicio,    "Inicio");
@@ -58,7 +56,6 @@ public class Navegador {
     public void irA(String pantalla) {
         cardLayout.show(panelContenido, pantalla);
 
-        // ← Resetear scroll del simulador al entrar
         if (pantalla.equals("simulador")) {
             scrollSimulador.getVerticalScrollBar().setValue(0);
         }

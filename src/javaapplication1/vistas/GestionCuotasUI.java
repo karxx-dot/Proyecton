@@ -29,9 +29,9 @@ public class GestionCuotasUI extends javax.swing.JPanel {
     setBorder(new EmptyBorder(15, 15, 15, 15));
     setBackground(Color.WHITE);
 
-    add(crearFormPanel(),   BorderLayout.NORTH);
-    add(crearTablePanel(),  BorderLayout.CENTER);
-    add(crearSearchPanel(), BorderLayout.SOUTH);
+    add(crearFormPanel(),BorderLayout.NORTH);
+    add(crearTablePanel(),BorderLayout.CENTER);
+    add(crearSearchPanel(),BorderLayout.SOUTH);
 
     inicializarControlador();
     GestionCuotasUI.agregarObservador(this);
@@ -40,11 +40,11 @@ public class GestionCuotasUI extends javax.swing.JPanel {
 
     private void inicializarControlador() {
         btnCalcular.addActionListener(e -> calcularCuotas());
-        btnGuardar.addActionListener(e  -> guardarCuotas());
+        btnGuardar.addActionListener(e -> guardarCuotas());
         btnEliminar.addActionListener(e -> eliminarCuota());
-        btnLupa.addActionListener(e     -> buscarCuota());
-        btnLimpiar.addActionListener(e  -> limpiarCampos());
-        btnNuevo.addActionListener(e    -> limpiarCampos());
+        btnLupa.addActionListener(e -> buscarCuota());
+        btnLimpiar.addActionListener(e -> limpiarCampos());
+        btnNuevo.addActionListener(e -> limpiarCampos());
     }
 
     // ==================== CÁLCULOS ====================
@@ -57,19 +57,19 @@ public class GestionCuotasUI extends javax.swing.JPanel {
             return;
         }
         try {
-            double monto  = Double.parseDouble(txtMonto.getText().trim());
+            double monto = Double.parseDouble(txtMonto.getText().trim());
             int    cuotas = Integer.parseInt(txtCuotas.getText().trim());
-            double tasa   = Double.parseDouble(txtTasa.getText().trim());
+            double tasa = Double.parseDouble(txtTasa.getText().trim());
             LocalDate fecha = LocalDate.parse(txtFechaInicio.getText().trim(),
                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             limpiarTabla();
 
             switch (tipo) {
-                case "PRÉSTAMO FRANCÉS":   calcularFrances(monto, cuotas, tasa, fecha);   break;
-                case "PRÉSTAMO ALEMÁN":    calcularAleman(monto, cuotas, tasa, fecha);    break;
+                case "PRÉSTAMO FRANCÉS": calcularFrances(monto, cuotas, tasa, fecha);   break;
+                case "PRÉSTAMO ALEMÁN": calcularAleman(monto, cuotas, tasa, fecha);    break;
                 case "PRÉSTAMO AMERICANO": calcularAmericano(monto, cuotas, tasa, fecha); break;
-                case "PRÉSTAMO SIMPLE":    calcularSimple(monto, cuotas, tasa, fecha);    break;
+                case "PRÉSTAMO SIMPLE": calcularSimple(monto, cuotas, tasa, fecha);    break;
                 case "PRÉSTAMO MANUAL":
                     JOptionPane.showMessageDialog(this,
                         "Modo manual: agrega las cuotas una por una con '➕ Nuevo'.",
@@ -186,7 +186,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         Union.PrestamoDAO prestamoDAO = new Union.PrestamoDAO();
         List<Object[]> prestamos = prestamoDAO.listarTodos();
         
-        System.out.println("Préstamos en BD: " + prestamos.size()); // ← DIAGNÓSTICO
+        System.out.println("Préstamos en BD: " + prestamos.size());
 
         if (prestamos.isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -201,7 +201,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
             ids[i] = (int) prestamos.get(i)[0];
             opciones[i] = "Préstamo #" + prestamos.get(i)[0] + " - " + prestamos.get(i)[1]
                         + " - $" + prestamos.get(i)[2];
-            System.out.println("Opción: " + opciones[i]); // ← DIAGNÓSTICO
+            System.out.println("Opción: " + opciones[i]);
         }
 
         String seleccion = (String) JOptionPane.showInputDialog(
@@ -224,7 +224,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
             }
         }
 
-        System.out.println("idPrestamo seleccionado: " + idPrestamo); // ← DIAGNÓSTICO
+        System.out.println("idPrestamo seleccionado: " + idPrestamo);
 
         if (idPrestamo == -1) return;
 
@@ -240,16 +240,16 @@ public class GestionCuotasUI extends javax.swing.JPanel {
                 double cuota   = Double.parseDouble(tableModel.getValueAt(i, 4).toString().replace(",", "."));
                 double saldo   = Double.parseDouble(tableModel.getValueAt(i, 5).toString().replace(",", "."));
 
-                System.out.println("Guardando fila " + i + ": nro=" + nro + " fecha=" + fecha); // ← DIAGNÓSTICO
+                System.out.println("Guardando fila " + i + ": nro=" + nro + " fecha=" + fecha); 
 
                 javaapplication1.modelo.Cuota c = new javaapplication1.modelo.Cuota(
                     nro, fecha, capital, interes, cuota, saldo);
                 boolean ok = dao.guardar(idPrestamo, c);
-                System.out.println("  → guardado: " + ok); // ← DIAGNÓSTICO
+                System.out.println("  → guardado: " + ok); 
                 if (ok) guardadas++;
 
             } catch (Exception ex) {
-                System.out.println("ERROR en fila " + i + ": " + ex.getMessage()); // ← DIAGNÓSTICO
+                System.out.println("ERROR en fila " + i + ": " + ex.getMessage()); 
                 ex.printStackTrace();
             }
         }
@@ -300,10 +300,10 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         return;
     }
     for (int i = 0; i < tableModel.getRowCount(); i++) {
-        for (int j = 0; j < tableModel.getColumnCount(); j++) {  // ← recorre todas las columnas
+        for (int j = 0; j < tableModel.getColumnCount(); j++) {
             if (tableModel.getValueAt(i, j).toString().toLowerCase().contains(texto)) {
                 dataTable.setRowSelectionInterval(i, i);
-                dataTable.scrollRectToVisible(dataTable.getCellRect(i, 0, true)); // ← hace scroll hasta la fila
+                dataTable.scrollRectToVisible(dataTable.getCellRect(i, 0, true)); 
                 JOptionPane.showMessageDialog(this, "✅ Cuota encontrada en fila " + (i+1),
                         "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 return;
@@ -320,7 +320,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
     JPanel formContainer = new JPanel(new BorderLayout());
     formContainer.setBackground(Color.WHITE);
     formContainer.setBorder(BorderFactory.createTitledBorder("Formulario de Cuota"));
-    formContainer.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, 220)); // ← AGREGAR
+    formContainer.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, 220));
     formContainer.setPreferredSize(new java.awt.Dimension(0, 220));
 
         JPanel fieldsPanel = new JPanel(new GridBagLayout());
@@ -330,7 +330,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         c.insets = new Insets(8, 8, 8, 8);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        // Fila 0 - Tipo préstamo y Monto
+        //préstamo y Monto
         c.gridx = 0; c.gridy = 0; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Tipo Préstamo:"), c);
         c.gridx = 1; c.weightx = 0.2;
@@ -343,7 +343,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         txtMonto = new JTextField("5000.00", 15);
         fieldsPanel.add(txtMonto, c);
 
-        // Fila 1 - Cuotas y Tasa
+        //Cuotas y Tasa
         c.gridx = 0; c.gridy = 1; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Nro. Cuotas:"), c);
         c.gridx = 1; c.weightx = 0.2;
@@ -356,12 +356,12 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         txtTasa = new JTextField("5.5", 15);
         fieldsPanel.add(txtTasa, c);
 
-        // Fila 2 - Fecha y Estado
+        //Fecha y Estado
         c.gridx = 0; c.gridy = 2; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Fecha Inicio:"), c);
         c.gridx = 1; c.weightx = 0.2;
         txtFechaInicio = new JTextField(
-            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), 15);
+           LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), 15);
         fieldsPanel.add(txtFechaInicio, c);
 
         c.gridx = 2; c.weightx = 0.1;
@@ -404,7 +404,7 @@ public class GestionCuotasUI extends javax.swing.JPanel {
         tableContainer.setBackground(Color.WHITE);
         tableContainer.setBorder(new EmptyBorder(10, 0, 10, 0));
 
-        // Columnas con Capital e Interés visibles
+        // Columnas
         String[] columns = {"Nro", "Fecha Pago", "Capital", "Interés", "Cuota Total", "Saldo"};
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int r, int c) { return false; }
@@ -478,28 +478,27 @@ public class GestionCuotasUI extends javax.swing.JPanel {
     }
 
     public void cargarDesdeBD() {
-        // Método mantenido por compatibilidad con Navegador.java
     }
 
-    public String getPrestamo()      { Object o = cbPrestamo.getSelectedItem(); return o == null ? "" : o.toString(); }
-    public String getNumeroCuota()   { return txtCuotas.getText().trim(); }
-    public String getMonto()         { return txtMonto.getText().trim(); }
-    public String getFechaPago()     { return txtFechaInicio.getText().trim(); }
-    public String getEstado()        { return txtEstado.getText().trim(); }
-    public String getTextoBusqueda() { return txtBuscar.getText().trim(); }
-    public int    getFilaSeleccionada() { return dataTable.getSelectedRow(); }
-    public DefaultTableModel getTableModel() { return tableModel; }
-    public JTable getDataTable()     { return dataTable; }
+    public String getPrestamo(){ Object o = cbPrestamo.getSelectedItem(); return o == null ? "" : o.toString(); }
+    public String getNumeroCuota(){ return txtCuotas.getText().trim(); }
+    public String getMonto(){ return txtMonto.getText().trim(); }
+    public String getFechaPago(){ return txtFechaInicio.getText().trim(); }
+    public String getEstado(){ return txtEstado.getText().trim(); }
+    public String getTextoBusqueda(){ return txtBuscar.getText().trim(); }
+    public int    getFilaSeleccionada(){ return dataTable.getSelectedRow(); }
+    public DefaultTableModel getTableModel(){ return tableModel; }
+    public JTable getDataTable(){ return dataTable; }
 
-    public void agregarListenerGuardar(ActionListener l)  { btnGuardar.addActionListener(l); }
-    public void agregarListenerEditar(ActionListener l)   { /* editar reemplazado por calcular */ }
-    public void agregarListenerEliminar(ActionListener l) { btnEliminar.addActionListener(l); }
-    public void agregarListenerLimpiar(ActionListener l)  { btnLimpiar.addActionListener(l); }
-    public void agregarListenerNuevo(ActionListener l)    { btnNuevo.addActionListener(l); }
-    public void agregarListenerBuscar(ActionListener l)   { btnLupa.addActionListener(l); }
+    public void agregarListenerGuardar(ActionListener l){ btnGuardar.addActionListener(l); }
+    public void agregarListenerEditar(ActionListener l){ }
+    public void agregarListenerEliminar(ActionListener l){ btnEliminar.addActionListener(l); }
+    public void agregarListenerLimpiar(ActionListener l){ btnLimpiar.addActionListener(l); }
+    public void agregarListenerNuevo(ActionListener l){ btnNuevo.addActionListener(l); }
+    public void agregarListenerBuscar(ActionListener l){ btnLupa.addActionListener(l); }
 
-    public static void agregarPrestamoGlobal(String p)       { }
-    public static void eliminarPrestamoGlobal(String p)      { }
-    public static void agregarObservador(GestionCuotasUI ui) { observadores.add(ui); }
-    public static List<String> obtenerPrestamosGlobales()    { return new ArrayList<>(); }
+    public static void agregarPrestamoGlobal(String p){ }
+    public static void eliminarPrestamoGlobal(String p){ }
+    public static void agregarObservador(GestionCuotasUI ui){ observadores.add(ui); }
+    public static List<String> obtenerPrestamosGlobales(){ return new ArrayList<>(); }
 }

@@ -78,8 +78,8 @@ public class ClienteDAO {
     private Cliente mapear(ResultSet rs) throws SQLException {
     return new Cliente(
         rs.getInt("idClientes"),
-        rs.getString("nombre"),    // ← nombre primero
-        rs.getString("cedula"),    // ← cedula segundo
+        rs.getString("nombre"),   
+        rs.getString("cedula"),   
         rs.getString("telefono"),
         rs.getString("email")
     );

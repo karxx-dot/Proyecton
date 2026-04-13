@@ -346,21 +346,21 @@ private void editarCliente() {
     public void eliminarFilaTabla(int fila)                { tableModel.removeRow(fila); }
     public void limpiarTabla()                             { tableModel.setRowCount(0); }
 
-    public String getCedula()           { return txtCedula.getText().trim(); }
-    public String getNombre()           { return txtNombre.getText().trim(); }
-    public String getTelefono()         { return txtTelefono.getText().trim(); }
-    public String getEmail()            { return txtEmail.getText().trim(); }
-    public String getTextoBusqueda()    { return txtBuscar.getText().trim(); }
-    public int    getFilaSeleccionada() { return dataTable.getSelectedRow(); }
+    public String getCedula(){ return txtCedula.getText().trim(); }
+    public String getNombre(){ return txtNombre.getText().trim(); }
+    public String getTelefono(){ return txtTelefono.getText().trim(); }
+    public String getEmail(){ return txtEmail.getText().trim(); }
+    public String getTextoBusqueda(){ return txtBuscar.getText().trim(); }
+    public int    getFilaSeleccionada(){ return dataTable.getSelectedRow(); }
     public DefaultTableModel getTableModel() { return tableModel; }
-    public JTable getDataTable()        { return dataTable; }
+    public JTable getDataTable(){ return dataTable; }
 
-    public void agregarListenerGuardar(ActionListener l)  { btnGuardar.addActionListener(l); }
-    public void agregarListenerEditar(ActionListener l)   { btnEditar.addActionListener(l); }
-    public void agregarListenerEliminar(ActionListener l) { btnEliminar.addActionListener(l); }
-    public void agregarListenerLimpiar(ActionListener l)  { btnLimpiar.addActionListener(l); }
-    public void agregarListenerNuevo(ActionListener l)    { btnNuevo.addActionListener(l); }
-    public void agregarListenerBuscar(ActionListener l)   { btnLupa.addActionListener(l); }
+    public void agregarListenerGuardar(ActionListener l){ btnGuardar.addActionListener(l); }
+    public void agregarListenerEditar(ActionListener l){ btnEditar.addActionListener(l); }
+    public void agregarListenerEliminar(ActionListener l){ btnEliminar.addActionListener(l); }
+    public void agregarListenerLimpiar(ActionListener l){ btnLimpiar.addActionListener(l); }
+    public void agregarListenerNuevo(ActionListener l){ btnNuevo.addActionListener(l); }
+    public void agregarListenerBuscar(ActionListener l){ btnLupa.addActionListener(l); }
 
     public static void agregarClienteGlobal(String nombre) {
         clientesGlobales.add(nombre);

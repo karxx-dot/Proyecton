@@ -8,14 +8,11 @@ public class Cuota extends EntidadBase {
     private LocalDate fecha;
     private double capital;
     private double interes;
-    private double montoTotal; // Cambiado de 'cuota' para evitar confusión con el nombre de la clase
+    private double montoTotal;
     private double saldoPendiente;
 
-    /**
-     * Constructor para el Simulador (Registros nuevos sin ID de BD).
-     */
     public Cuota(int numero, LocalDate fecha, double capital, double interes, double montoTotal, double saldoPendiente) {
-        super(); // Genera fechas de creación automáticamente
+        super();
         this.numero = numero;
         this.fecha = fecha;
         setCapital(capital);
@@ -25,7 +22,7 @@ public class Cuota extends EntidadBase {
     }
 
     /**
-     * Constructor para registros existentes en la Base de Datos.
+     * Constructor registros existentes.
      */
     public Cuota(int id, int numero, LocalDate fecha, double capital, double interes, double montoTotal, double saldoPendiente) {
         super(id);
@@ -37,7 +34,6 @@ public class Cuota extends EntidadBase {
         setSaldoPendiente(saldoPendiente);
     }
 
-    // Método privado para asegurar precisión de 2 decimales
     private double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }

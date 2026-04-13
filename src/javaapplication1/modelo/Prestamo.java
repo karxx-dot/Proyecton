@@ -5,12 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Clase que representa un préstamo dentro del sistema.
- * 
- * Implementa la interfaz OperacionBase para garantizar
- * cálculos uniformes de cuotas, intereses y saldos.
- */
 public class Prestamo implements OperacionBase {
     protected double monto;
     protected int numeroCuotas;
@@ -34,7 +28,7 @@ public class Prestamo implements OperacionBase {
     public double getTasaInteresAnual() { return tasaInteresAnual; }
     public LocalDate getFechaInicio() { return fechaInicio; }
 
-    // Fórmula de amortización francesa (cuota fija)
+    // Fórmula francesa
     @Override
     public double calcularCuota(int numeroCuota) {
         double tasaMensual = tasaInteresAnual / 100.0 / 12.0;
@@ -72,7 +66,6 @@ public class Prestamo implements OperacionBase {
             double capital = redondear(cuotaFija - interes);
             saldo = redondear(saldo - capital);
 
-            // Todas las cuotas el mismo día del mes (día de fechaInicio)
             LocalDate fechaPago = fechaInicio.plusMonths(i);
 
             // Ajuste de seguridad: última cuota deja saldo en 0 exacto
@@ -83,7 +76,6 @@ public class Prestamo implements OperacionBase {
         return cronograma;
     }
 
-    // Método auxiliar para redondear a 2 decimales
     protected double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }

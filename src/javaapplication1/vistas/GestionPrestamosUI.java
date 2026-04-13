@@ -56,17 +56,17 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
 
    private void guardarPrestamo() {
     String nombreCliente = getCliente();
-    String monto         = getMonto();
-    String tasa          = getTasa();
-    String plazo         = getPlazo();
-    String fechaInicio   = getFechaInicio();
+    String monto = getMonto();
+    String tasa = getTasa();
+    String plazo = getPlazo();
+    String fechaInicio = getFechaInicio();
 
     System.out.println("=== GUARDAR PRÉSTAMO ===");
     System.out.println("Cliente: " + nombreCliente);
     System.out.println("Monto: " + monto);
     System.out.println("Tasa: " + tasa);
     System.out.println("Plazo: " + plazo);
-    System.out.println("Fecha: [" + fechaInicio + "]"); // ← ver formato exacto
+    System.out.println("Fecha: [" + fechaInicio + "]");
 
     if (nombreCliente.isEmpty() || monto.isEmpty() || tasa.isEmpty() 
             || plazo.isEmpty() || fechaInicio.isEmpty()) {
@@ -80,7 +80,7 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         double tasaD  = Double.parseDouble(tasa);
         int    plazoI = Integer.parseInt(plazo);
 
-        // Obtener idCliente desde BD
+        // Obtener idCliente
         Union.PrestamoDAO prestamoDAO = new Union.PrestamoDAO();
         int idCliente = prestamoDAO.obtenerIdClientePorNombre(nombreCliente);
         if (idCliente == -1) {
@@ -90,7 +90,7 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
             return;
         }
 
-        // Parsear fecha
+        // fecha
         java.time.LocalDate fecha = java.time.LocalDate.parse(fechaInicio,
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
@@ -106,7 +106,7 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
             return;
         }
 
-        // Agregar fila a la tabla visual
+        // Agregar fila a la tabla
         Object[] fila = {nombreCliente, monto, tasa + "%", plazo, fechaInicio};
         agregarFilaTabla(fila);
         limpiarCampos();
@@ -217,13 +217,12 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         java.time.format.DateTimeFormatter fmt = 
             java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
         for (Object[] fila : lista) {
-            // fila: [idprestamos, nombre, monto, tasa, plazo, fecha_inicio]
             tableModel.addRow(new Object[]{
-                fila[1],                                                    // nombre
-                String.valueOf(fila[2]),                                    // monto
-                fila[3] + "%",                                              // tasa
-                String.valueOf(fila[4]),                                    // plazo
-                ((java.time.LocalDate) fila[5]).format(fmt)                // fecha
+                fila[1],                                                 
+                String.valueOf(fila[2]),                                   
+                fila[3] + "%",                                             
+                String.valueOf(fila[4]),                                   
+                ((java.time.LocalDate) fila[5]).format(fmt)                
             });
         }
     } catch (java.sql.SQLException ex) {
@@ -245,7 +244,7 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         c.insets = new Insets(8, 8, 8, 8);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        // Cliente - ComboBox VACÍO
+        // Cliente
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 0.1;
@@ -350,7 +349,7 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         dataTable.setRowHeight(25);
         dataTable.getTableHeader().setReorderingAllowed(false);
 
-        // Listener para cargar datos cuando se selecciona una fila
+        // Listener
         dataTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 cargarPrestamoSeleccionado();
@@ -431,12 +430,12 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
     try {
         ClienteDAO dao = new ClienteDAO();
         List<Cliente> clientes = dao.listarTodos();
-        System.out.println("Clientes encontrados: " + clientes.size()); // ← DIAGNÓSTICO
+        System.out.println("Clientes encontrados: " + clientes.size());
         for (Cliente c : clientes) {
             cbCliente.addItem(c.getNombre());
         }
     } catch (Exception e) {
-        System.out.println("ERROR: " + e.getMessage()); // ← VER ERROR
+        System.out.println("ERROR: " + e.getMessage());
         e.printStackTrace();
         JOptionPane.showMessageDialog(this,
             "Error al cargar clientes: " + e.getMessage(),

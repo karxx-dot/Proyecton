@@ -20,7 +20,6 @@ public class Conexion {
             "jdbc:mysql://" + HOST + ":" + PUERTO + "/" + BD
             + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
 
-    // Cada llamada abre una conexión nueva fresca
     public static Connection getConexion() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

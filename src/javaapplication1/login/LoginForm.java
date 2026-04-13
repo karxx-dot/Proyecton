@@ -249,7 +249,7 @@ public class LoginForm extends javax.swing.JFrame {
     try {
         if (dao.validar(user, pass, tipo)) {
             System.out.println("Abriendo Main...");
-            javaapplication1.SesionActual.setRol(tipo); // ← AGREGAR ESTA LÍNEA
+            javaapplication1.SesionActual.setRol(tipo);
             new javaapplication1.Main().setVisible(true);
             this.dispose();
         } else {

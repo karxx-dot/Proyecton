@@ -107,7 +107,7 @@ public class GestionSimuladorUI extends JPanel {
         scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         scrollTabla.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollTabla.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollTabla.setPreferredSize(new Dimension(0, 350)); // ← altura fija para la tabla
+        scrollTabla.setPreferredSize(new Dimension(0, 350)); 
 
         return scrollTabla;
     }

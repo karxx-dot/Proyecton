@@ -16,7 +16,7 @@ public class Form_Home extends javax.swing.JPanel {
         card1.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "Total Prestado",    "RD$ 450,000", "en préstamos activos"));
         card2.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "Total Clientes",    "128",         "clientes registrados"));
         card3.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "Cuotas Pendientes", "34",          "cuotas por cobrar"));
-    //AGREGAR LAS TABLAS 
+    //TABLAS 
     
     spTable.setVerticalScrollBar(new JScrollBar());
     spTable.getVerticalScrollBar(). setBackground(Color.WHITE);

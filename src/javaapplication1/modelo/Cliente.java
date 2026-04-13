@@ -2,42 +2,31 @@ package javaapplication1.modelo;
 
 import javaapplication1.abstracta.EntidadBase;
 
-/**
- * Clase que representa a un cliente dentro del sistema de préstamos.
- * * Persona 2 garantiza que los datos básicos estén validados y que
- * la entidad mantenga su rastro de auditoría mediante EntidadBase.
- */
+
 public class Cliente extends EntidadBase {
     private String nombre;
     private String cedula;
     private String telefono;
     private String email;
 
-    /**
-     * Constructor para clientes NUEVOS (antes de guardarlos en BD).
-     * El ID se queda en 0 por defecto hasta que la BD lo asigne.
-     */
+    
     public Cliente(String nombre, String cedula, String telefono, String email) {
-        super(); // Inicializa las fechas de creación
+        super();
         setNombre(nombre);
         setCedula(cedula);
         setTelefono(telefono);
         setEmail(email);
     }
 
-    /**
-     * Constructor para clientes EXISTENTES (traídos de la BD).
-     * @param id identificador único ya existente.
-     */
     public Cliente(int id, String nombre, String cedula, String telefono, String email) {
-        super(id); // Valida que el ID sea positivo
+        super(id); 
         setNombre(nombre);
         setCedula(cedula);
         setTelefono(telefono);
         setEmail(email);
     }
 
-    // --- Getters y Setters con lógica de negocio ---
+    // --- Getters y Setters  ---
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) {

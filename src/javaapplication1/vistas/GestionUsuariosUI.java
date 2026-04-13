@@ -18,10 +18,8 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
     private JTable dataTable;
     private DefaultTableModel tableModel;
 
-    // ── NUEVO ───────────────────────────────────────────────
     private final UsuarioDAO dao = new UsuarioDAO();
     private List<Integer> idsUsuarios = new java.util.ArrayList<>();
-    // ───────────────────────────────────────────────────────
 
     public GestionUsuariosUI() {
         setSize(1000, 650);
@@ -40,19 +38,18 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         add(crearSearchPanel(), BorderLayout.SOUTH);
 
         inicializarControlador();
-        cargarDesdeBD(); // ← NUEVO
+        cargarDesdeBD();
     }
 
     private void inicializarControlador() {
-        btnGuardar.addActionListener(e  -> guardarUsuario());
-        btnEditar.addActionListener(e   -> editarUsuario());
+        btnGuardar.addActionListener(e -> guardarUsuario());
+        btnEditar.addActionListener(e -> editarUsuario());
         btnEliminar.addActionListener(e -> eliminarUsuario());
-        btnLupa.addActionListener(e     -> buscarUsuario());
-        btnLimpiar.addActionListener(e  -> limpiarCampos());
-        btnNuevo.addActionListener(e    -> limpiarCampos());
+        btnLupa.addActionListener(e -> buscarUsuario());
+        btnLimpiar.addActionListener(e -> limpiarCampos());
+        btnNuevo.addActionListener(e -> limpiarCampos());
     }
 
-    // ── NUEVO ───────────────────────────────────────────────
     public void cargarDesdeBD() {
         try {
             List<Object[]> lista = dao.listarTodos();
@@ -72,13 +69,12 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
                 "Error BD", JOptionPane.ERROR_MESSAGE);
         }
     }
-    // ───────────────────────────────────────────────────────
 
     private void guardarUsuario() {
         String nombreReal = getNombreReal();
-        String usuario    = getUsuario();
-        String password   = getPassword();
-        String rol        = getRol();
+        String usuario = getUsuario();
+        String password = getPassword();
+        String rol = getRol();
 
         if (nombreReal.isEmpty() || usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
             JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
@@ -87,7 +83,6 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         }
 
         try {
-            // ── NUEVO ───────────────────────────────────────
             Usuario u = new Usuario(nombreReal, usuario, password, rol);
             boolean ok = dao.guardar(u);
             if (!ok) {
@@ -99,7 +94,6 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
             limpiarCampos();
             JOptionPane.showMessageDialog(this, "✅ Usuario guardado exitosamente.",
                     "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            // ───────────────────────────────────────────────
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -118,9 +112,9 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         }
 
         String nombreReal = getNombreReal();
-        String usuario    = getUsuario();
-        String password   = getPassword();
-        String rol        = getRol();
+        String usuario = getUsuario();
+        String password = getPassword();
+        String rol = getRol();
 
         if (nombreReal.isEmpty() || usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
             JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
@@ -129,7 +123,6 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         }
 
         try {
-            // ── NUEVO ───────────────────────────────────────
             int idUsuario = idsUsuarios.get(fila);
             Usuario u = new Usuario(nombreReal, usuario, password, rol);
             boolean ok = dao.actualizar(idUsuario, u);
@@ -143,7 +136,7 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
             limpiarCampos();
             JOptionPane.showMessageDialog(this, "✅ Usuario actualizado exitosamente.",
                     "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            // ───────────────────────────────────────────────
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -164,7 +157,7 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
 
         if (confirmacion == JOptionPane.YES_OPTION) {
             try {
-                // ── NUEVO ───────────────────────────────────
+                
                 int idUsuario = idsUsuarios.get(fila);
                 boolean ok = dao.eliminar(idUsuario);
                 if (!ok) {
@@ -177,7 +170,7 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
                 limpiarCampos();
                 JOptionPane.showMessageDialog(this, "✅ Usuario eliminado exitosamente.",
                         "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                // ───────────────────────────────────────────
+
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -193,7 +186,7 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
             return;
         }
         try {
-            // ── NUEVO ───────────────────────────────────────
+
             List<Object[]> resultados = dao.buscar(texto);
             if (resultados.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "❌ No se encontró ningún usuario.",
@@ -208,7 +201,7 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
             }
             dataTable.setRowSelectionInterval(0, 0);
             cargarUsuarioSeleccionado();
-            // ───────────────────────────────────────────────
+            
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -227,13 +220,11 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         c.insets = new Insets(8, 8, 8, 8);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        // ── NUEVO: campo Nombre Real ─────────────────────
         c.gridx = 0; c.gridy = 0; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Nombre Real:"), c);
         c.gridx = 1; c.weightx = 0.2;
         txtNombreReal = new JTextField(15);
         fieldsPanel.add(txtNombreReal, c);
-        // ─────────────────────────────────────────────────
 
         c.gridx = 2; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Usuario:"), c);
@@ -337,24 +328,24 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         }
     }
 
-    public void agregarFilaTabla(Object[] fila)           { tableModel.addRow(fila); }
-    public void actualizarFilaTabla(int fila, Object[] d) { for (int i = 0; i < d.length; i++) tableModel.setValueAt(d[i], fila, i); }
-    public void eliminarFilaTabla(int fila)               { tableModel.removeRow(fila); }
-    public void limpiarTabla()                            { tableModel.setRowCount(0); }
+    public void agregarFilaTabla(Object[] fila){ tableModel.addRow(fila); }
+    public void actualizarFilaTabla(int fila, Object[] d){ for (int i = 0; i < d.length; i++) tableModel.setValueAt(d[i], fila, i); }
+    public void eliminarFilaTabla(int fila){ tableModel.removeRow(fila); }
+    public void limpiarTabla(){ tableModel.setRowCount(0); }
 
-    public String getNombreReal()     { return txtNombreReal.getText().trim(); }
-    public String getUsuario()        { return txtUsuario.getText().trim(); }
-    public String getPassword()       { return new String(txtPassword.getPassword()).trim(); }
-    public String getRol()            { return txtRol.getText().trim(); }
-    public String getTextoBusqueda()  { return txtBuscar.getText().trim(); }
+    public String getNombreReal(){ return txtNombreReal.getText().trim(); }
+    public String getUsuario(){ return txtUsuario.getText().trim(); }
+    public String getPassword(){ return new String(txtPassword.getPassword()).trim(); }
+    public String getRol(){ return txtRol.getText().trim(); }
+    public String getTextoBusqueda(){ return txtBuscar.getText().trim(); }
     public int    getFilaSeleccionada(){ return dataTable.getSelectedRow(); }
-    public DefaultTableModel getTableModel() { return tableModel; }
-    public JTable getDataTable()      { return dataTable; }
+    public DefaultTableModel getTableModel(){ return tableModel; }
+    public JTable getDataTable(){ return dataTable; }
 
-    public void agregarListenerGuardar(ActionListener l)  { btnGuardar.addActionListener(l); }
-    public void agregarListenerEditar(ActionListener l)   { btnEditar.addActionListener(l); }
-    public void agregarListenerEliminar(ActionListener l) { btnEliminar.addActionListener(l); }
-    public void agregarListenerLimpiar(ActionListener l)  { btnLimpiar.addActionListener(l); }
-    public void agregarListenerNuevo(ActionListener l)    { btnNuevo.addActionListener(l); }
-    public void agregarListenerBuscar(ActionListener l)   { btnLupa.addActionListener(l); }
+    public void agregarListenerGuardar(ActionListener l){ btnGuardar.addActionListener(l); }
+    public void agregarListenerEditar(ActionListener l){ btnEditar.addActionListener(l); }
+    public void agregarListenerEliminar(ActionListener l){ btnEliminar.addActionListener(l); }
+    public void agregarListenerLimpiar(ActionListener l){ btnLimpiar.addActionListener(l); }
+    public void agregarListenerNuevo(ActionListener l){ btnNuevo.addActionListener(l); }
+    public void agregarListenerBuscar(ActionListener l){ btnLupa.addActionListener(l); }
 }

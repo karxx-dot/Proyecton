@@ -8,30 +8,30 @@ public class Usuario extends EntidadBase {
     private String password;
     private String rol;
 
-    // Constructor para usuarios NUEVOS
+    // Constructor para usuarios 
     public Usuario(String nombreReal, String nombreUsuario, String password, String rol) {
-        this.nombreReal    = nombreReal;
+        this.nombreReal = nombreReal;
         this.nombreUsuario = nombreUsuario;
-        this.password      = password;
-        this.rol           = rol;
+        this.password = password;
+        this.rol = rol;
     }
 
     // Constructor para usuarios EXISTENTES (traídos de la BD)
     public Usuario(int id, String nombreReal, String nombreUsuario, String password, String rol) {
         super(id);
-        this.nombreReal    = nombreReal;
+        this.nombreReal = nombreReal;
         this.nombreUsuario = nombreUsuario;
-        this.password      = password;
-        this.rol           = rol;
+        this.password = password;
+        this.rol = rol;
     }
 
     // Getters
-    public String getNombreReal()    { return nombreReal; }
-    public String getNombreUsuario() { return nombreUsuario; }
-    public String getPassword()      { return password; }
-    public String getRol()           { return rol; }
-    public String getUsername()      { return nombreUsuario; }
-    public String getTipo()          { return rol; }
+    public String getNombreReal(){ return nombreReal; }
+    public String getNombreUsuario(){ return nombreUsuario; }
+    public String getPassword(){ return password; }
+    public String getRol() { return rol; }
+    public String getUsername() { return nombreUsuario; }
+    public String getTipo() { return rol; }
 
     // Setters
     public void setNombreReal(String nombreReal) {
@@ -60,11 +60,11 @@ public class Usuario extends EntidadBase {
         actualizarFecha();
     }
 
-    public void setTipo(String tipo)         { this.rol = tipo; }
-    public void setUsername(String username) { this.nombreUsuario = username; }
+    public void setTipo(String tipo){ this.rol = tipo; }
+    public void setUsername(String username){ this.nombreUsuario = username; }
 
     @Override
-    public String mostrarInformacion() {
+    public String mostrarInformacion(){
         return String.format("ID: %d | Usuario: %s | Rol: %s", getId(), nombreUsuario, rol);
     }
 

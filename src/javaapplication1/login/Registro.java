@@ -190,13 +190,12 @@ public class Registro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    String nombre   = jTextField1.getText().trim(); // nombre real
-    String correo   = jTextField2.getText().trim(); // correo (validación visual)
-    String usuario  = jTextField4.getText().trim(); // nombre de usuario
-    String password = jTextField3.getText().trim(); // contraseña
+    String nombre   = jTextField1.getText().trim(); 
+    String correo   = jTextField2.getText().trim(); 
+    String usuario  = jTextField4.getText().trim(); 
+    String password = jTextField3.getText().trim(); 
     String tipo     = jComboBox1.getSelectedItem().toString().trim();
 
-    // Validaciones
     if (nombre.isEmpty() || correo.isEmpty() || usuario.isEmpty() || password.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this,
             "⚠️ Por favor completa todos los campos.",
