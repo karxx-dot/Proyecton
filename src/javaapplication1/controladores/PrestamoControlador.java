@@ -133,7 +133,6 @@ public class PrestamoControlador {
             String cliente = (String) vista.getTableModel().getValueAt(filaSeleccionada, 0);
             vista.eliminarFilaTabla(filaSeleccionada);
             
-            // ✅ NOTIFICAR A GESTIÓN DE CUOTAS
             javaapplication1.vistas.GestionCuotasUI.eliminarPrestamoGlobal(cliente);
             
             vista.limpiarCampos();
@@ -173,13 +172,13 @@ public class PrestamoControlador {
         List<Object[]> lista = dao.listarTodos();
         vista.limpiarTabla();
         for (Object[] fila : lista) {
-            // fila: [idprestamos, nombre, monto, tasa, plazo, fecha_inicio]
+    
             vista.agregarFilaTabla(new Object[]{
-                fila[1],                    // nombre cliente
-                fila[2],                    // monto
-                fila[3] + "%",             // tasa
-                fila[4],                    // plazo
-                fila[5].toString()         // fecha
+                fila[1],         
+                fila[2],      
+                fila[3] + "%",   
+                fila[4],  
+                fila[5].toString() 
             });
         }
     } catch (Exception e) {
