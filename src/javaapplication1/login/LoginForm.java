@@ -107,7 +107,6 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel6.setText("Contraseña");
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("Olvide la contraseña");
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javaapplication1/login/perfil-icono.png"))); // NOI18N
 
@@ -169,7 +168,6 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(Tipo)
                         .addGap(4, 4, 4)))
-                .addGap(18, 18, 18)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

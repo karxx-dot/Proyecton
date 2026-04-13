@@ -211,7 +211,7 @@ public class Registro extends javax.swing.JFrame {
         return;
     }
 
-    if (password.length() < 6) {
+    if (password.length() < 5) {
         javax.swing.JOptionPane.showMessageDialog(this,
             "⚠️ La contraseña debe tener al menos 6 caracteres.",
             "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);

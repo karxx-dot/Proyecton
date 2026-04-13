@@ -248,7 +248,6 @@
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Olvide la contrase&#xf1;a"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">

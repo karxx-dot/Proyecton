@@ -36,20 +36,5 @@ public interface OperacionBase {
      */
     double calcularSaldo(int numeroCuota);
 
-    /**
-     * Genera la lista completa de cuotas (plan de pagos).
-     * 
-     * Cada objeto {@link Cuota} debe incluir:
-     * <ul>
-     *   <li>Número de cuota</li>
-     *   <li>Fecha de pago</li>
-     *   <li>Capital</li>
-     *   <li>Interés</li>
-     *   <li>Monto total de la cuota</li>
-     *   <li>Saldo restante</li>
-     * </ul>
-     * 
-     * @return lista de cuotas que conforman el cronograma
-     */
     List<Cuota> generarCronograma();
 }
