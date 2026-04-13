@@ -9,41 +9,44 @@ import javaapplication1.modelo.Cliente;
 public class ClienteDAO {
 
     public boolean guardar(Cliente c) throws SQLException {
-        String sql = "INSERT INTO clientes (cedula, nombre, telefono, email) VALUES (?, ?, ?, ?)";
-        try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, c.getCedula());
-            ps.setString(2, c.getNombre());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getEmail());
-            ps.executeUpdate();
-            return true;
-        } catch (SQLIntegrityConstraintViolationException e) {
-            return false;
-        }
+    String sql = "INSERT INTO clientes (nombre, cedula, telefono, email) VALUES (?, ?, ?, ?)";
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, c.getNombre());   // ← nombre primero
+        ps.setString(2, c.getCedula());   // ← cedula segundo
+        ps.setString(3, c.getTelefono());
+        ps.setString(4, c.getEmail());
+        int filas = ps.executeUpdate();
+        System.out.println("Filas insertadas: " + filas);
+        return filas > 0;
+    } catch (SQLIntegrityConstraintViolationException e) {
+        return false;
     }
+}
 
-    public boolean actualizar(String cedulaOriginal, Cliente c) throws SQLException {
-        String sql = "UPDATE clientes SET cedula=?, nombre=?, telefono=?, email=? WHERE cedula=?";
-        try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, c.getCedula());
-            ps.setString(2, c.getNombre());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getEmail());
-            ps.setString(5, cedulaOriginal);
-            return ps.executeUpdate() > 0;
-        }
+   public boolean actualizar(String cedulaOriginal, Cliente c) throws SQLException {
+    String sql = "UPDATE clientes SET nombre=?, cedula=?, telefono=?, email=? WHERE TRIM(cedula) = TRIM(?)";
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, c.getNombre());
+        ps.setString(2, c.getCedula());
+        ps.setString(3, c.getTelefono());
+        ps.setString(4, c.getEmail());
+        ps.setString(5, cedulaOriginal.trim());
+        return ps.executeUpdate() > 0;
     }
+}
 
     public boolean eliminar(String cedula) throws SQLException {
-        String sql = "DELETE FROM clientes WHERE cedula = ?";
-        try (Connection con = Conexion.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, cedula);
-            return ps.executeUpdate() > 0;
-        }
+    String sql = "DELETE FROM clientes WHERE TRIM(cedula) = TRIM(?)";
+    try (Connection con = Conexion.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, cedula.trim());
+        int filas = ps.executeUpdate();
+        System.out.println("Filas eliminadas: " + filas);
+        return filas > 0;
     }
+}
 
     public List<Cliente> listarTodos() throws SQLException {
         String sql = "SELECT idClientes, cedula, nombre, telefono, email FROM clientes ORDER BY nombre";
@@ -73,12 +76,12 @@ public class ClienteDAO {
     }
 
     private Cliente mapear(ResultSet rs) throws SQLException {
-        return new Cliente(
-            rs.getInt("idClientes"),
-            rs.getString("cedula"),
-            rs.getString("nombre"),
-            rs.getString("telefono"),
-            rs.getString("email")
-        );
-    }
+    return new Cliente(
+        rs.getInt("idClientes"),
+        rs.getString("nombre"),    // ← nombre primero
+        rs.getString("cedula"),    // ← cedula segundo
+        rs.getString("telefono"),
+        rs.getString("email")
+    );
+  }
 }

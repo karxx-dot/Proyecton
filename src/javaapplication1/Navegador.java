@@ -39,6 +39,16 @@ public class Navegador {
 
     // ← ESTO FALTABA
     public void irA(String pantalla) {
-        cardLayout.show(panelContenido, pantalla);
+    cardLayout.show(panelContenido, pantalla);
+    
+    // Recargar datos al navegar a Clientes
+    if (pantalla.equals("Clientes")) {
+        for (java.awt.Component comp : panelContenido.getComponents()) {
+            if (comp instanceof javaapplication1.vistas.GestionClientesUI) {
+                ((javaapplication1.vistas.GestionClientesUI) comp).cargarDesdeBD();
+                break;
+            }
+        }
     }
+}
 }

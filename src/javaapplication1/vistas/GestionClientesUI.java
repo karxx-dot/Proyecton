@@ -54,103 +54,107 @@ public class GestionClientesUI extends JPanel {
     }
 
     private void guardarCliente() {
-        String cedula   = getCedula();
-        String nombre   = getNombre();
-        String telefono = getTelefono();
-        String email    = getEmail();
+    String cedula   = getCedula();
+    String nombre   = getNombre();
+    String telefono = getTelefono();
+    String email    = getEmail();
 
-        if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
-                "Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            boolean guardado = dao.guardar(new Cliente(cedula, nombre, telefono, email));
-            if (!guardado) {
-                JOptionPane.showMessageDialog(this, "⚠️ La cédula ya existe en la base de datos.",
-                    "Duplicado", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            agregarFilaTabla(new Object[]{cedula, nombre, telefono, email});
-            agregarClienteGlobal(nombre);
-            limpiarCampos();
-            JOptionPane.showMessageDialog(this, "✅ Cliente guardado exitosamente.",
-                "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException ex) {
-            mostrarErrorBD("guardar el cliente", ex);
-        }
+    if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
+            "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
     }
 
-    private void editarCliente() {
-        int fila = getFilaSeleccionada();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un cliente para editar.",
-                "Validación", JOptionPane.WARNING_MESSAGE);
+    try {
+        boolean guardado = dao.guardar(new Cliente(nombre, cedula, telefono, email));
+        if (!guardado) {
+            JOptionPane.showMessageDialog(this, "⚠️ La cédula ya existe en la base de datos.",
+                "Duplicado", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        cargarDesdeBD();
+        limpiarCampos();
+        JOptionPane.showMessageDialog(this, "✅ Cliente guardado exitosamente.",
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (SQLException ex) {
+        mostrarErrorBD("guardar el cliente", ex);
+    }
+}
 
-        String cedula   = getCedula();
-        String nombre   = getNombre();
-        String telefono = getTelefono();
-        String email    = getEmail();
+private void editarCliente() {
+    int fila = getFilaSeleccionada();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "⚠️ Selecciona un cliente para editar.",
+            "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
-        if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
-                "Validación", JOptionPane.WARNING_MESSAGE);
+    String cedula   = getCedula();
+    String nombre   = getNombre();
+    String telefono = getTelefono();
+    String email    = getEmail();
+
+    if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
+            "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    String cedulaOriginal = tableModel.getValueAt(fila, 0).toString();
+
+    try {
+        boolean ok = dao.actualizar(cedulaOriginal, new Cliente(nombre, cedula, telefono, email)); // ← cedula primero
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "⚠️ No se encontró el cliente en la base de datos.",
+                "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        cargarDesdeBD(); // ← recarga desde BD
+        limpiarCampos();
+        JOptionPane.showMessageDialog(this, "✅ Cliente actualizado exitosamente.",
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (SQLException ex) {
+        mostrarErrorBD("editar el cliente", ex);
+    }
+}
 
-        String cedulaOriginal = tableModel.getValueAt(fila, 0).toString();
+    private void eliminarCliente() {
+    int fila = getFilaSeleccionada();
 
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "⚠️ Selecciona un cliente para eliminar.",
+            "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    String cedulaEliminar  = tableModel.getValueAt(fila, 0).toString();
+    String nombreEliminado = tableModel.getValueAt(fila, 1).toString();
+    
+    System.out.println("Intentando eliminar cédula: [" + cedulaEliminar + "]"); // ← agrega esto
+
+    int confirmacion = JOptionPane.showConfirmDialog(this,
+        "¿Estás seguro de que deseas eliminar este cliente?",
+        "Confirmación", JOptionPane.YES_NO_OPTION);
+
+    if (confirmacion == JOptionPane.YES_OPTION) {
         try {
-            boolean ok = dao.actualizar(cedulaOriginal, new Cliente(cedula, nombre, telefono, email));
+            boolean ok = dao.eliminar(cedulaEliminar);
+            System.out.println("¿Eliminado?: " + ok); // ← y esto
             if (!ok) {
                 JOptionPane.showMessageDialog(this, "⚠️ No se encontró el cliente en la base de datos.",
                     "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            actualizarFilaTabla(fila, new Object[]{cedula, nombre, telefono, email});
+            eliminarFilaTabla(fila);
+            eliminarClienteGlobal(nombreEliminado);
             limpiarCampos();
-            JOptionPane.showMessageDialog(this, "✅ Cliente actualizado exitosamente.",
+            JOptionPane.showMessageDialog(this, "✅ Cliente eliminado exitosamente.",
                 "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
-            mostrarErrorBD("editar el cliente", ex);
+            mostrarErrorBD("eliminar el cliente", ex);
         }
     }
-
-    private void eliminarCliente() {
-        int fila = getFilaSeleccionada();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un cliente para eliminar.",
-                "Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int confirmacion = JOptionPane.showConfirmDialog(this,
-            "¿Estás seguro de que deseas eliminar este cliente?",
-            "Confirmación", JOptionPane.YES_NO_OPTION);
-
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            String cedulaEliminar  = tableModel.getValueAt(fila, 0).toString();
-            String nombreEliminado = tableModel.getValueAt(fila, 1).toString();
-            try {
-                boolean ok = dao.eliminar(cedulaEliminar);
-                if (!ok) {
-                    JOptionPane.showMessageDialog(this, "⚠️ No se encontró el cliente en la base de datos.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                eliminarFilaTabla(fila);
-                eliminarClienteGlobal(nombreEliminado);
-                limpiarCampos();
-                JOptionPane.showMessageDialog(this, "✅ Cliente eliminado exitosamente.",
-                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException ex) {
-                mostrarErrorBD("eliminar el cliente", ex);
-            }
-        }
-    }
+}
 
     private void buscarCliente() {
         String texto = getTextoBusqueda();
@@ -179,23 +183,23 @@ public class GestionClientesUI extends JPanel {
         }
     }
 
-    private void cargarDesdeBD() {
-        try {
-            List<Cliente> clientes = dao.listarTodos();
-            limpiarTabla();
-            clientesGlobales.clear();
-            for (Cliente c : clientes) {
-                agregarFilaTabla(new Object[]{c.getCedula(), c.getNombre(), c.getTelefono(), c.getEmail()});
-                clientesGlobales.add(c.getNombre());
-            }
-            notificarObservadores();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                "⚠️ No se pudo conectar a la base de datos.\n\n" + ex.getMessage()
-                + "\n\nRevisa usuario/contraseña en ConexionDB.java",
-                "Error de conexión", JOptionPane.ERROR_MESSAGE);
+    public void cargarDesdeBD() {
+    try {
+        List<Cliente> clientes = dao.listarTodos();
+        limpiarTabla();
+        clientesGlobales.clear();
+        for (Cliente c : clientes) {
+            agregarFilaTabla(new Object[]{c.getCedula(), c.getNombre(), c.getTelefono(), c.getEmail()});
+            clientesGlobales.add(c.getNombre());
         }
+        notificarObservadores();
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this,
+            "⚠️ No se pudo conectar a la base de datos.\n\n" + ex.getMessage()
+            + "\n\nRevisa usuario/contraseña en ConexionDB.java",
+            "Error de conexión", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     private void mostrarErrorBD(String accion, SQLException ex) {
         ex.printStackTrace();
