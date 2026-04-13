@@ -1,150 +1,218 @@
 package javaapplication1.vistas;
 
+import Union.UsuarioDAO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
+import javaapplication1.modelo.Usuario;
 
 public class GestionUsuariosUI extends javax.swing.JPanel {
 
-    private JTextField txtUsuario, txtRol, txtBuscar;
+    private JTextField txtNombreReal, txtUsuario, txtRol, txtBuscar;
     private JPasswordField txtPassword;
     private JButton btnGuardar, btnEditar, btnEliminar, btnLupa, btnLimpiar, btnNuevo;
     private JTable dataTable;
     private DefaultTableModel tableModel;
 
+    // ── NUEVO ───────────────────────────────────────────────
+    private final UsuarioDAO dao = new UsuarioDAO();
+    private List<Integer> idsUsuarios = new java.util.ArrayList<>();
+    // ───────────────────────────────────────────────────────
+
     public GestionUsuariosUI() {
-        
         setSize(1000, 650);
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Aplicar Look & Feel Nimbus
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        add(crearFormPanel(), BorderLayout.NORTH);
-        add(crearTablePanel(), BorderLayout.CENTER);
+        add(crearFormPanel(),   BorderLayout.NORTH);
+        add(crearTablePanel(),  BorderLayout.CENTER);
         add(crearSearchPanel(), BorderLayout.SOUTH);
-        
-        // Inicializar controlador
+
         inicializarControlador();
+        cargarDesdeBD(); // ← NUEVO
     }
 
     private void inicializarControlador() {
-        btnGuardar.addActionListener(e -> guardarUsuario());
-        btnEditar.addActionListener(e -> editarUsuario());
+        btnGuardar.addActionListener(e  -> guardarUsuario());
+        btnEditar.addActionListener(e   -> editarUsuario());
         btnEliminar.addActionListener(e -> eliminarUsuario());
-        btnLupa.addActionListener(e -> buscarUsuario());
-        btnLimpiar.addActionListener(e -> limpiarCampos());
-        btnNuevo.addActionListener(e -> limpiarCampos());
+        btnLupa.addActionListener(e     -> buscarUsuario());
+        btnLimpiar.addActionListener(e  -> limpiarCampos());
+        btnNuevo.addActionListener(e    -> limpiarCampos());
     }
 
-    private void guardarUsuario() {
-        String usuario = getUsuario();
-        String password = getPassword();
-        String rol = getRol();
+    // ── NUEVO ───────────────────────────────────────────────
+    public void cargarDesdeBD() {
+        try {
+            List<Object[]> lista = dao.listarTodos();
+            limpiarTabla();
+            idsUsuarios.clear();
+            for (Object[] row : lista) {
+                idsUsuarios.add((Integer) row[0]);
+                tableModel.addRow(new Object[]{
+                    row[2], // nombreUsuario
+                    row[3], // password
+                    row[4]  // rol
+                });
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this,
+                "⚠️ Error al cargar usuarios:\n" + ex.getMessage(),
+                "Error BD", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    // ───────────────────────────────────────────────────────
 
-        // Validaciones
-        if (usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.", 
+    private void guardarUsuario() {
+        String nombreReal = getNombreReal();
+        String usuario    = getUsuario();
+        String password   = getPassword();
+        String rol        = getRol();
+
+        if (nombreReal.isEmpty() || usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Verificar si el usuario ya existe
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            if (tableModel.getValueAt(i, 0).toString().equals(usuario)) {
-                JOptionPane.showMessageDialog(this, "⚠️ El usuario ya existe.", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+        try {
+            // ── NUEVO ───────────────────────────────────────
+            Usuario u = new Usuario(nombreReal, usuario, password, rol);
+            boolean ok = dao.guardar(u);
+            if (!ok) {
+                JOptionPane.showMessageDialog(this, "⚠️ El usuario ya existe.",
+                        "Duplicado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            cargarDesdeBD();
+            limpiarCampos();
+            JOptionPane.showMessageDialog(this, "✅ Usuario guardado exitosamente.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            // ───────────────────────────────────────────────
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, "⚠️ " + ex.getMessage(),
+                    "Validación", JOptionPane.WARNING_MESSAGE);
         }
-
-        // Agregar fila a la tabla
-        Object[] fila = {usuario, password, rol};
-        agregarFilaTabla(fila);
-        limpiarCampos();
-        JOptionPane.showMessageDialog(this, "✅ Usuario guardado exitosamente.", 
-                "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void editarUsuario() {
-        int filaSeleccionada = getFilaSeleccionada();
-
-        if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un usuario para editar.", 
+        int fila = getFilaSeleccionada();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un usuario para editar.",
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String usuario = getUsuario();
-        String password = getPassword();
-        String rol = getRol();
+        String nombreReal = getNombreReal();
+        String usuario    = getUsuario();
+        String password   = getPassword();
+        String rol        = getRol();
 
-        if (usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.", 
+        if (nombreReal.isEmpty() || usuario.isEmpty() || password.isEmpty() || rol.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Object[] fila = {usuario, password, rol};
-        actualizarFilaTabla(filaSeleccionada, fila);
-        limpiarCampos();
-        JOptionPane.showMessageDialog(this, "✅ Usuario actualizado exitosamente.", 
-                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            // ── NUEVO ───────────────────────────────────────
+            int idUsuario = idsUsuarios.get(fila);
+            Usuario u = new Usuario(nombreReal, usuario, password, rol);
+            boolean ok = dao.actualizar(idUsuario, u);
+            if (!ok) {
+                JOptionPane.showMessageDialog(this,
+                    "⚠️ No se encontró el usuario en la base de datos.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            cargarDesdeBD();
+            limpiarCampos();
+            JOptionPane.showMessageDialog(this, "✅ Usuario actualizado exitosamente.",
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            // ───────────────────────────────────────────────
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void eliminarUsuario() {
-        int filaSeleccionada = getFilaSeleccionada();
-
-        if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un usuario para eliminar.", 
+        int fila = getFilaSeleccionada();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "⚠️ Selecciona un usuario para eliminar.",
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
-                "¿Estás seguro de que deseas eliminar este usuario?", 
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Estás seguro de que deseas eliminar este usuario?",
                 "Confirmación", JOptionPane.YES_NO_OPTION);
 
         if (confirmacion == JOptionPane.YES_OPTION) {
-            eliminarFilaTabla(filaSeleccionada);
-            limpiarCampos();
-            JOptionPane.showMessageDialog(this, "✅ Usuario eliminado exitosamente.", 
-                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                // ── NUEVO ───────────────────────────────────
+                int idUsuario = idsUsuarios.get(fila);
+                boolean ok = dao.eliminar(idUsuario);
+                if (!ok) {
+                    JOptionPane.showMessageDialog(this,
+                        "⚠️ No se encontró el usuario en la base de datos.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                cargarDesdeBD();
+                limpiarCampos();
+                JOptionPane.showMessageDialog(this, "✅ Usuario eliminado exitosamente.",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                // ───────────────────────────────────────────
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     private void buscarUsuario() {
-        String textoBusqueda = getTextoBusqueda().toLowerCase();
-
-        if (textoBusqueda.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Ingresa un texto para buscar.", 
+        String texto = getTextoBusqueda();
+        if (texto.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "⚠️ Ingresa un texto para buscar.",
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            String usuario = tableModel.getValueAt(i, 0).toString().toLowerCase();
-            String rol = tableModel.getValueAt(i, 2).toString().toLowerCase();
-
-            if (usuario.contains(textoBusqueda) || rol.contains(textoBusqueda)) {
-                dataTable.setRowSelectionInterval(i, i);
-                cargarUsuarioSeleccionado();
-                JOptionPane.showMessageDialog(this, "✅ Usuario encontrado.", 
-                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            // ── NUEVO ───────────────────────────────────────
+            List<Object[]> resultados = dao.buscar(texto);
+            if (resultados.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "❌ No se encontró ningún usuario.",
+                        "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
+            limpiarTabla();
+            idsUsuarios.clear();
+            for (Object[] row : resultados) {
+                idsUsuarios.add((Integer) row[0]);
+                tableModel.addRow(new Object[]{ row[2], row[3], row[4] });
+            }
+            dataTable.setRowSelectionInterval(0, 0);
+            cargarUsuarioSeleccionado();
+            // ───────────────────────────────────────────────
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "❌ Error BD:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        JOptionPane.showMessageDialog(this, "❌ No se encontró ningún usuario.", 
-                "No encontrado", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private JPanel crearFormPanel() {
@@ -159,48 +227,39 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
         c.insets = new Insets(8, 8, 8, 8);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        // Usuario
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.1;
+        // ── NUEVO: campo Nombre Real ─────────────────────
+        c.gridx = 0; c.gridy = 0; c.weightx = 0.1;
+        fieldsPanel.add(new JLabel("Nombre Real:"), c);
+        c.gridx = 1; c.weightx = 0.2;
+        txtNombreReal = new JTextField(15);
+        fieldsPanel.add(txtNombreReal, c);
+        // ─────────────────────────────────────────────────
+
+        c.gridx = 2; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Usuario:"), c);
-        c.gridx = 1;
-        c.weightx = 0.2;
+        c.gridx = 3; c.weightx = 0.2;
         txtUsuario = new JTextField(15);
-        txtUsuario.setToolTipText("Ingrese el nombre de usuario");
         fieldsPanel.add(txtUsuario, c);
 
-        // Contraseña
-        c.gridx = 2;
-        c.weightx = 0.1;
+        c.gridx = 0; c.gridy = 1; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Contraseña:"), c);
-        c.gridx = 3;
-        c.weightx = 0.2;
+        c.gridx = 1; c.weightx = 0.2;
         txtPassword = new JPasswordField(15);
-        txtPassword.setToolTipText("Ingrese la contraseña");
         fieldsPanel.add(txtPassword, c);
 
-        // Rol
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weightx = 0.1;
+        c.gridx = 2; c.weightx = 0.1;
         fieldsPanel.add(new JLabel("Rol:"), c);
-        c.gridx = 1;
-        c.weightx = 0.2;
+        c.gridx = 3; c.weightx = 0.2;
         txtRol = new JTextField(15);
-        txtRol.setToolTipText("Ej: Admin, Usuario, Moderador");
         fieldsPanel.add(txtRol, c);
 
-        // Botones CRUD
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
         buttonPanel.setOpaque(false);
-        
-        btnGuardar = crearBoton("💾 Guardar", new Color(34, 139, 34));
-        btnEditar = crearBoton("✏️ Editar", new Color(30, 144, 255));
+        btnGuardar  = crearBoton("💾 Guardar",  new Color(34, 139, 34));
+        btnEditar   = crearBoton("✏️ Editar",   new Color(30, 144, 255));
         btnEliminar = crearBoton("🗑️ Eliminar", new Color(220, 20, 60));
-        btnLimpiar = crearBoton("Limpiar", new Color(169, 169, 169));
-        btnNuevo = crearBoton("➕ Nuevo", new Color(184, 134, 11));
-
+        btnLimpiar  = crearBoton("Limpiar",     new Color(169, 169, 169));
+        btnNuevo    = crearBoton("➕ Nuevo",    new Color(184, 134, 11));
         buttonPanel.add(btnGuardar);
         buttonPanel.add(btnEditar);
         buttonPanel.add(btnEliminar);
@@ -209,7 +268,6 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
 
         formContainer.add(fieldsPanel, BorderLayout.CENTER);
         formContainer.add(buttonPanel, BorderLayout.SOUTH);
-
         return formContainer;
     }
 
@@ -226,58 +284,41 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
     private JPanel crearTablePanel() {
         JPanel tableContainer = new JPanel(new BorderLayout());
         tableContainer.setBackground(Color.WHITE);
-        tableContainer.setBorder(BorderFactory.createTitledBorder("Lista de Usuarios"));
         tableContainer.setBorder(new EmptyBorder(10, 0, 10, 0));
-
         String[] columns = {"Usuario", "Contraseña", "Rol"};
         tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
         dataTable = new JTable(tableModel);
         dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dataTable.setRowHeight(25);
         dataTable.getTableHeader().setReorderingAllowed(false);
-
-        // Listener para cargar datos cuando se selecciona una fila
         dataTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                cargarUsuarioSeleccionado();
-            }
+            if (!e.getValueIsAdjusting()) cargarUsuarioSeleccionado();
         });
-
-        JScrollPane scrollPane = new JScrollPane(dataTable);
-        tableContainer.add(scrollPane, BorderLayout.CENTER);
-
+        tableContainer.add(new JScrollPane(dataTable), BorderLayout.CENTER);
         return tableContainer;
     }
 
     private JPanel crearSearchPanel() {
-        JPanel searchContainer = new JPanel(new BorderLayout());
-        searchContainer.setBorder(BorderFactory.createTitledBorder("Búsqueda"));
-        searchContainer.setBorder(new EmptyBorder(10, 10, 10, 10));
-
+        JPanel container = new JPanel(new BorderLayout());
+        container.setBorder(new EmptyBorder(10, 10, 10, 10));
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         searchPanel.setOpaque(false);
-
         searchPanel.add(new JLabel("Buscar por usuario o rol:"));
         txtBuscar = new JTextField(20);
-        txtBuscar.setToolTipText("Ingrese usuario o rol");
         searchPanel.add(txtBuscar);
-
         btnLupa = crearBoton("🔍 Buscar", new Color(70, 130, 180));
         searchPanel.add(btnLupa);
-
-        searchContainer.add(searchPanel, BorderLayout.WEST);
-
-        return searchContainer;
+        JButton btnTodos = crearBoton("🔄 Todos", new Color(100, 100, 100));
+        btnTodos.addActionListener(e -> cargarDesdeBD());
+        searchPanel.add(btnTodos);
+        container.add(searchPanel, BorderLayout.WEST);
+        return container;
     }
 
-    // ==================== MÉTODOS PÚBLICOS ====================
-
     public void limpiarCampos() {
+        txtNombreReal.setText("");
         txtUsuario.setText("");
         txtPassword.setText("");
         txtRol.setText("");
@@ -286,99 +327,34 @@ public class GestionUsuariosUI extends javax.swing.JPanel {
     }
 
     public void cargarUsuarioSeleccionado() {
-        int filaSeleccionada = dataTable.getSelectedRow();
-        if (filaSeleccionada != -1) {
-            txtUsuario.setText((String) tableModel.getValueAt(filaSeleccionada, 0));
-            txtPassword.setText((String) tableModel.getValueAt(filaSeleccionada, 1));
-            txtRol.setText((String) tableModel.getValueAt(filaSeleccionada, 2));
+        int fila = dataTable.getSelectedRow();
+        if (fila != -1) {
+            // nombreReal no está en tabla, lo dejamos vacío
+            txtNombreReal.setText("");
+            txtUsuario.setText(tableModel.getValueAt(fila, 0).toString());
+            txtPassword.setText(tableModel.getValueAt(fila, 1).toString());
+            txtRol.setText(tableModel.getValueAt(fila, 2).toString());
         }
     }
 
-    public void agregarFilaTabla(Object[] fila) {
-        tableModel.addRow(fila);
-    }
+    public void agregarFilaTabla(Object[] fila)           { tableModel.addRow(fila); }
+    public void actualizarFilaTabla(int fila, Object[] d) { for (int i = 0; i < d.length; i++) tableModel.setValueAt(d[i], fila, i); }
+    public void eliminarFilaTabla(int fila)               { tableModel.removeRow(fila); }
+    public void limpiarTabla()                            { tableModel.setRowCount(0); }
 
-    public void actualizarFilaTabla(int fila, Object[] datos) {
-        for (int i = 0; i < datos.length; i++) {
-            tableModel.setValueAt(datos[i], fila, i);
-        }
-    }
+    public String getNombreReal()     { return txtNombreReal.getText().trim(); }
+    public String getUsuario()        { return txtUsuario.getText().trim(); }
+    public String getPassword()       { return new String(txtPassword.getPassword()).trim(); }
+    public String getRol()            { return txtRol.getText().trim(); }
+    public String getTextoBusqueda()  { return txtBuscar.getText().trim(); }
+    public int    getFilaSeleccionada(){ return dataTable.getSelectedRow(); }
+    public DefaultTableModel getTableModel() { return tableModel; }
+    public JTable getDataTable()      { return dataTable; }
 
-    public void eliminarFilaTabla(int fila) {
-        tableModel.removeRow(fila);
-    }
-
-    public void limpiarTabla() {
-        tableModel.setRowCount(0);
-    }
-
-    // ==================== GETTERS ====================
-
-    public String getUsuario() {
-        return txtUsuario.getText().trim();
-    }
-
-    public String getPassword() {
-        return new String(txtPassword.getPassword()).trim();
-    }
-
-    public String getRol() {
-        return txtRol.getText().trim();
-    }
-
-    public String getTextoBusqueda() {
-        return txtBuscar.getText().trim();
-    }
-
-    public int getFilaSeleccionada() {
-        return dataTable.getSelectedRow();
-    }
-
-    public DefaultTableModel getTableModel() {
-        return tableModel;
-    }
-
-    public JTable getDataTable() {
-        return dataTable;
-    }
-
-    // ==================== SETTERS DE LISTENERS ====================
-
-    public void agregarListenerGuardar(ActionListener listener) {
-        btnGuardar.addActionListener(listener);
-    }
-
-    public void agregarListenerEditar(ActionListener listener) {
-        btnEditar.addActionListener(listener);
-    }
-
-    public void agregarListenerEliminar(ActionListener listener) {
-        btnEliminar.addActionListener(listener);
-    }
-
-    public void agregarListenerLimpiar(ActionListener listener) {
-        btnLimpiar.addActionListener(listener);
-    }
-
-    public void agregarListenerNuevo(ActionListener listener) {
-        btnNuevo.addActionListener(listener);
-    }
-
-    public void agregarListenerBuscar(ActionListener listener) {
-        btnLupa.addActionListener(listener);
-    }
-
-    // ==================== MAIN ====================
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        SwingUtilities.invokeLater(() -> {
-            GestionUsuariosUI vista = new GestionUsuariosUI();
-            vista.setVisible(true);
-        });
-    }
+    public void agregarListenerGuardar(ActionListener l)  { btnGuardar.addActionListener(l); }
+    public void agregarListenerEditar(ActionListener l)   { btnEditar.addActionListener(l); }
+    public void agregarListenerEliminar(ActionListener l) { btnEliminar.addActionListener(l); }
+    public void agregarListenerLimpiar(ActionListener l)  { btnLimpiar.addActionListener(l); }
+    public void agregarListenerNuevo(ActionListener l)    { btnNuevo.addActionListener(l); }
+    public void agregarListenerBuscar(ActionListener l)   { btnLupa.addActionListener(l); }
 }

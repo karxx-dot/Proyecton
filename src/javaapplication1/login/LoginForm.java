@@ -5,6 +5,7 @@
 package javaapplication1.login;
 
 import Union.LoginDAO;
+import java.sql.SQLException;
 
 /**
  *
@@ -241,29 +242,31 @@ public class LoginForm extends javax.swing.JFrame {
 
     
     private void IniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarActionPerformed
-  String user = usuario.getText();
-String pass = contra.getText();
-String tipo = Tipo.getSelectedItem().toString();
 
-LoginDAO dao = new LoginDAO();
-try {
-    if (dao.validar(user, pass, tipo)) {
-        System.out.println("Abriendo Main...");
-        new javaapplication1.Main().setVisible(true);
-        this.dispose();
-    } else {
-        System.out.println("Credenciales incorrectas");
+    String user = usuario.getText();
+    String pass = contra.getText();
+    String tipo = Tipo.getSelectedItem().toString();
+
+    LoginDAO dao = new LoginDAO();
+    try {
+        if (dao.validar(user, pass, tipo)) {
+            System.out.println("Abriendo Main...");
+            javaapplication1.SesionActual.setRol(tipo); // ← AGREGAR ESTA LÍNEA
+            new javaapplication1.Main().setVisible(true);
+            this.dispose();
+        } else {
+            System.out.println("Credenciales incorrectas");
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Usuario o contraseña incorrectos",
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    } catch (SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this,
-            "Usuario o contraseña incorrectos",
+            "Error al iniciar sesión: " + e.getMessage(),
             "Error",
             javax.swing.JOptionPane.ERROR_MESSAGE);
     }
-} catch (SQLException e) {
-    javax.swing.JOptionPane.showMessageDialog(this,
-        "Error al iniciar sesión: " + e.getMessage(),
-        "Error",
-        javax.swing.JOptionPane.ERROR_MESSAGE);
-}
     }//GEN-LAST:event_IniciarActionPerformed
 
     

@@ -1,5 +1,10 @@
 package javaapplication1.controladores;
 
+import Union.PrestamoDAO;
+import java.awt.HeadlessException;
+import java.sql.SQLException;
+import java.util.List;
+import javaapplication1.modelo.Prestamo;
 import javaapplication1.vistas.GestionPrestamosUI;
 import javax.swing.*;
 
@@ -7,9 +12,11 @@ public class PrestamoControlador {
     private GestionPrestamosUI vista;
 
     public PrestamoControlador(GestionPrestamosUI vista) {
-        this.vista = vista;
-        inicializarListeners();
-    }
+    this.vista = vista;
+    inicializarListeners();
+    vista.actualizarComboClientes();
+    cargarTablaDesdeDB();
+}
 
     private void inicializarListeners() {
         vista.agregarListenerGuardar(e -> guardarPrestamo());
@@ -21,38 +28,55 @@ public class PrestamoControlador {
     }
 
     private void guardarPrestamo() {
-        String cliente = vista.getCliente();
-        String monto = vista.getMonto();
-        String tasa = vista.getTasa();
-        String plazo = vista.getPlazo();
-        String fechaInicio = vista.getFechaInicio();
+    String nombreCliente = vista.getCliente();
+    String monto = vista.getMonto();
+    String tasa = vista.getTasa();
+    String plazo = vista.getPlazo();
+    String fechaInicio = vista.getFechaInicio();
 
-        if (cliente.isEmpty() || monto.isEmpty() || tasa.isEmpty() || plazo.isEmpty() || fechaInicio.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "⚠️ Por favor, completa todos los campos.", 
-                    "Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+    if (nombreCliente.isEmpty() || monto.isEmpty() || tasa.isEmpty() 
+        || plazo.isEmpty() || fechaInicio.isEmpty()) {
+        JOptionPane.showMessageDialog(vista, "⚠️ Completa todos los campos.",
+                "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
-        try {
-            Double.parseDouble(monto);
-            Double.parseDouble(tasa);
-            Integer.parseInt(plazo);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vista, "⚠️ Monto, Tasa y Plazo deben ser números.", 
+    try {
+        double montoD = Double.parseDouble(monto);
+        double tasaD  = Double.parseDouble(tasa);
+        int    plazoI = Integer.parseInt(plazo);
+
+        // Obtener idCliente desde BD
+        PrestamoDAO prestamoDAO = new PrestamoDAO();
+        int idCliente = prestamoDAO.obtenerIdClientePorNombre(nombreCliente);
+        if (idCliente == -1) {
+            JOptionPane.showMessageDialog(vista, "❌ Cliente no encontrado en BD.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Object[] fila = {cliente, monto, tasa + "%", plazo, fechaInicio};
-        vista.agregarFilaTabla(fila);
-        
-        // ✅ NOTIFICAR A GESTIÓN DE CUOTAS
-        javaapplication1.vistas.GestionCuotasUI.agregarPrestamoGlobal(cliente);
-        
+        // Crear y guardar préstamo
+        java.time.LocalDate fecha = java.time.LocalDate.parse(fechaInicio,
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        Prestamo p = new Prestamo(montoD, plazoI, tasaD, fecha);
+        prestamoDAO.guardar(idCliente, p);
+
+        // Refrescar tabla
+        vista.limpiarTabla();
+        cargarTablaDesdeDB();
+
         vista.limpiarCampos();
-        JOptionPane.showMessageDialog(vista, "✅ Préstamo guardado exitosamente.", 
+        JOptionPane.showMessageDialog(vista, "✅ Préstamo guardado.", 
                 "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(vista, "⚠️ Monto, Tasa y Plazo deben ser números.",
+                "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (HeadlessException | SQLException ex) {
+        JOptionPane.showMessageDialog(vista, "❌ Error: " + ex.getMessage(),
+                "Error BD", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     private void editarPrestamo() {
         int filaSeleccionada = vista.getFilaSeleccionada();
@@ -143,4 +167,24 @@ public class PrestamoControlador {
         JOptionPane.showMessageDialog(vista, "❌ No se encontró ningún préstamo.", 
                 "No encontrado", JOptionPane.INFORMATION_MESSAGE);
     }
+    public void cargarTablaDesdeDB() {
+    try {
+        PrestamoDAO dao = new PrestamoDAO();
+        List<Object[]> lista = dao.listarTodos();
+        vista.limpiarTabla();
+        for (Object[] fila : lista) {
+            // fila: [idprestamos, nombre, monto, tasa, plazo, fecha_inicio]
+            vista.agregarFilaTabla(new Object[]{
+                fila[1],                    // nombre cliente
+                fila[2],                    // monto
+                fila[3] + "%",             // tasa
+                fila[4],                    // plazo
+                fila[5].toString()         // fecha
+            });
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(vista, "Error cargando préstamos: " + e.getMessage(),
+                "Error BD", JOptionPane.ERROR_MESSAGE);
+    }
+}
 }

@@ -64,20 +64,28 @@ public class menu extends javax.swing.JPanel {
         animTimer.start();
     }
 private void init(){
-listMenu1.addItem(new Model_menu("iconfinder-computer-4341285_120548", "Inicio", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Clientes", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "simulador", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "prestamos", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Cobros", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
 
-listMenu1.addItem(new Model_menu("", "Datos", Model_menu.MenuType.TITLE));
-listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "reportes", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "caja", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Usuarios", Model_menu.MenuType.MENU));
-listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
-    
+    String rol = javaapplication1.SesionActual.getRol();
+
+    listMenu1.addItem(new Model_menu("iconfinder-computer-4341285_120548", "Inicio",     Model_menu.MenuType.MENU));
+    listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551",     "Clientes",   Model_menu.MenuType.MENU));
+    listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551",     "simulador",  Model_menu.MenuType.MENU));
+    listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551",     "prestamos",  Model_menu.MenuType.MENU));
+    listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551",     "Cobros",     Model_menu.MenuType.MENU));
+    listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
+
+    // Solo Admin y Empleado ven la sección Datos con Usuarios
+    if (rol.equals("Admin") || rol.equals("Empleado")) {
+        listMenu1.addItem(new Model_menu("", "Datos", Model_menu.MenuType.TITLE));
+        listMenu1.addItem(new Model_menu("", " ",     Model_menu.MenuType.EMPTY));
+
+        // Solo Admin ve Usuarios
+        if (rol.equals("Admin")) {
+            listMenu1.addItem(new Model_menu("iconfinder-file-4341289_120551", "Usuarios", Model_menu.MenuType.MENU));
+        }
+
+        listMenu1.addItem(new Model_menu("", " ", Model_menu.MenuType.EMPTY));
+    }
 }
 
 

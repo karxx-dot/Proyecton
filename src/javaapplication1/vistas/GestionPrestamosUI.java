@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import Union.ClienteDAO;
+import javaapplication1.modelo.Cliente;
 
 public class GestionPrestamosUI extends javax.swing.JPanel {
 
@@ -17,16 +19,15 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
     private JButton btnGuardar, btnEditar, btnEliminar, btnLupa, btnLimpiar, btnNuevo;
     private JTable dataTable;
     private DefaultTableModel tableModel;
-    
-    // Variable estática para compartir clientes globalmente
-    private static List<String> clientesGlobales = new ArrayList<>();
-    private static List<GestionPrestamosUI> observadores = new ArrayList<>();
 
     public GestionPrestamosUI() {
-        
-        setSize(1100, 700);
-        setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(15, 15, 15, 15));
+    setLayout(new BorderLayout());
+    setBorder(new EmptyBorder(15, 15, 15, 15));
+    setBackground(Color.WHITE);
+
+    add(crearFormPanel(),   BorderLayout.NORTH);
+    add(crearTablePanel(),  BorderLayout.CENTER);
+    add(crearSearchPanel(), BorderLayout.SOUTH);
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -40,10 +41,8 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         add(crearSearchPanel(), BorderLayout.SOUTH);
 
         inicializarControlador();
-        
-        // Registrar como observador
-        GestionPrestamosUI.agregarObservador(this);
         actualizarComboClientes();
+        cargarDesdeBD();
     }
 
     private void inicializarControlador() {
@@ -55,38 +54,75 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         btnNuevo.addActionListener(e -> limpiarCampos());
     }
 
-    private void guardarPrestamo() {
-        String cliente = getCliente();
-        String monto = getMonto();
-        String tasa = getTasa();
-        String plazo = getPlazo();
-        String fechaInicio = getFechaInicio();
+   private void guardarPrestamo() {
+    String nombreCliente = getCliente();
+    String monto         = getMonto();
+    String tasa          = getTasa();
+    String plazo         = getPlazo();
+    String fechaInicio   = getFechaInicio();
 
-        // Validaciones
-        if (cliente.isEmpty() || monto.isEmpty() || tasa.isEmpty() || plazo.isEmpty() || fechaInicio.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.", 
-                    "Validación", JOptionPane.WARNING_MESSAGE);
+    System.out.println("=== GUARDAR PRÉSTAMO ===");
+    System.out.println("Cliente: " + nombreCliente);
+    System.out.println("Monto: " + monto);
+    System.out.println("Tasa: " + tasa);
+    System.out.println("Plazo: " + plazo);
+    System.out.println("Fecha: [" + fechaInicio + "]"); // ← ver formato exacto
+
+    if (nombreCliente.isEmpty() || monto.isEmpty() || tasa.isEmpty() 
+            || plazo.isEmpty() || fechaInicio.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "⚠️ Por favor, completa todos los campos.",
+                "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try {
+        double montoD = Double.parseDouble(monto);
+        double tasaD  = Double.parseDouble(tasa);
+        int    plazoI = Integer.parseInt(plazo);
+
+        // Obtener idCliente desde BD
+        Union.PrestamoDAO prestamoDAO = new Union.PrestamoDAO();
+        int idCliente = prestamoDAO.obtenerIdClientePorNombre(nombreCliente);
+        if (idCliente == -1) {
+            JOptionPane.showMessageDialog(this,
+                "❌ Cliente no encontrado en la BD.",
+                "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Validar que monto, tasa y plazo sean números
-        try {
-            Double.parseDouble(monto);
-            Double.parseDouble(tasa);
-            Integer.parseInt(plazo);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "⚠️ Monto, Tasa y Plazo deben ser números.", 
-                    "Error", JOptionPane.ERROR_MESSAGE);
+        // Parsear fecha
+        java.time.LocalDate fecha = java.time.LocalDate.parse(fechaInicio,
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        // Crear y guardar préstamo en BD
+        javaapplication1.modelo.Prestamo p = new javaapplication1.modelo.Prestamo(
+                montoD, plazoI, tasaD, fecha);
+        boolean ok = prestamoDAO.guardar(idCliente, p);
+
+        if (!ok) {
+            JOptionPane.showMessageDialog(this,
+                "⚠️ No se pudo guardar el préstamo.",
+                "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Agregar fila a la tabla
-        Object[] fila = {cliente, monto, tasa + "%", plazo, fechaInicio};
+        // Agregar fila a la tabla visual
+        Object[] fila = {nombreCliente, monto, tasa + "%", plazo, fechaInicio};
         agregarFilaTabla(fila);
         limpiarCampos();
-        JOptionPane.showMessageDialog(this, "✅ Préstamo guardado exitosamente.", 
+        JOptionPane.showMessageDialog(this, "✅ Préstamo guardado en la BD.",
                 "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this,
+            "⚠️ Monto, Tasa y Plazo deben ser números.",
+            "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (java.sql.SQLException ex) {
+        JOptionPane.showMessageDialog(this,
+            "❌ Error BD:\n" + ex.getMessage(),
+            "Error", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     private void editarPrestamo() {
         int filaSeleccionada = getFilaSeleccionada();
@@ -172,6 +208,30 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "❌ No se encontró ningún préstamo.", 
                 "No encontrado", JOptionPane.INFORMATION_MESSAGE);
     }
+   
+   public void cargarDesdeBD() {
+    try {
+        Union.PrestamoDAO dao = new Union.PrestamoDAO();
+        java.util.List<Object[]> lista = dao.listarTodos();
+        limpiarTabla();
+        java.time.format.DateTimeFormatter fmt = 
+            java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        for (Object[] fila : lista) {
+            // fila: [idprestamos, nombre, monto, tasa, plazo, fecha_inicio]
+            tableModel.addRow(new Object[]{
+                fila[1],                                                    // nombre
+                String.valueOf(fila[2]),                                    // monto
+                fila[3] + "%",                                              // tasa
+                String.valueOf(fila[4]),                                    // plazo
+                ((java.time.LocalDate) fila[5]).format(fmt)                // fecha
+            });
+        }
+    } catch (java.sql.SQLException ex) {
+        JOptionPane.showMessageDialog(this,
+            "❌ Error al cargar préstamos:\n" + ex.getMessage(),
+            "Error BD", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
     private JPanel crearFormPanel() {
         JPanel formContainer = new JPanel(new BorderLayout());
@@ -234,12 +294,10 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         fieldsPanel.add(new JLabel("Fecha Inicio:"), c);
         c.gridx = 1;
         c.weightx = 0.2;
-        try {
-            txtFechaInicio = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
-            txtFechaInicio.setToolTipText("Ej: 10/04/2026");
-        } catch (Exception ex) {
-            txtFechaInicio = new JFormattedTextField();
-        }
+        txtFechaInicio = new JFormattedTextField();
+        txtFechaInicio.setText(java.time.LocalDate.now()
+        .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        txtFechaInicio.setToolTipText("Ej: 13/04/2026");
         fieldsPanel.add(txtFechaInicio, c);
 
         // Botones CRUD
@@ -369,11 +427,22 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
     }
 
     public void actualizarComboClientes() {
-        cbCliente.removeAllItems();
-        for (String cliente : clientesGlobales) {
-            cbCliente.addItem(cliente);
+    cbCliente.removeAllItems();
+    try {
+        ClienteDAO dao = new ClienteDAO();
+        List<Cliente> clientes = dao.listarTodos();
+        System.out.println("Clientes encontrados: " + clientes.size()); // ← DIAGNÓSTICO
+        for (Cliente c : clientes) {
+            cbCliente.addItem(c.getNombre());
         }
+    } catch (Exception e) {
+        System.out.println("ERROR: " + e.getMessage()); // ← VER ERROR
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+            "Error al cargar clientes: " + e.getMessage(),
+            "Error BD", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     // ==================== GETTERS ====================
 
@@ -394,9 +463,11 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
         return txtPlazo.getText().trim();
     }
 
-    public String getFechaInicio() {
-        return txtFechaInicio.getText().trim();
-    }
+   public String getFechaInicio() {
+    String texto = txtFechaInicio.getText().trim();
+    System.out.println("getFechaInicio(): [" + texto + "]");
+    return texto;
+}
 
     public String getTextoBusqueda() {
         return txtBuscar.getText().trim();
@@ -438,32 +509,6 @@ public class GestionPrestamosUI extends javax.swing.JPanel {
 
     public void agregarListenerBuscar(ActionListener listener) {
         btnLupa.addActionListener(listener);
-    }
-
-    // ==================== MÉTODOS ESTÁTICOS PARA COMUNICACIÓN ====================
-
-    public static void agregarClienteGlobal(String nombreCompleto) {
-        clientesGlobales.add(nombreCompleto);
-        notificarObservadores();
-    }
-
-    public static void eliminarClienteGlobal(String nombreCompleto) {
-        clientesGlobales.remove(nombreCompleto);
-        notificarObservadores();
-    }
-
-    public static void agregarObservador(GestionPrestamosUI ui) {
-        observadores.add(ui);
-    }
-
-    private static void notificarObservadores() {
-        for (GestionPrestamosUI ui : observadores) {
-            ui.actualizarComboClientes();
-        }
-    }
-
-    public static List<String> obtenerClientesGlobales() {
-        return clientesGlobales;
     }
 
     // ==================== MAIN ====================

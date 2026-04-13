@@ -19,18 +19,17 @@ public class GestionSimuladorUI extends JPanel {
     private JTable tabla;
 
     public GestionSimuladorUI() {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(242, 242, 242));
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, 650)); // ← NUEVO
-        setPreferredSize(new Dimension(0, 650));               // ← NUEVO
+    setLayout(new BorderLayout(10, 10));
+    setBackground(new Color(242, 242, 242));
+    setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    setPreferredSize(new Dimension(800, 650));
 
-        JPanel norte = crearPanelSuperior();
-        norte.setPreferredSize(new Dimension(0, 200));
+    JPanel norte = crearPanelSuperior();
+    norte.setPreferredSize(new Dimension(0, 200));
 
-        add(norte, BorderLayout.NORTH);
-        add(crearTabla(), BorderLayout.CENTER);
-    }
+    add(norte,        BorderLayout.NORTH);
+    add(crearTabla(), BorderLayout.CENTER);
+}
 
     private JPanel crearPanelSuperior() {
         JPanel panel = new JPanel(new BorderLayout(10, 0));
@@ -81,7 +80,7 @@ public class GestionSimuladorUI extends JPanel {
         panelBotones.add(crearBoton("PRÉSTAMO SIMPLE",    () -> calcularSimple()));
         panelBotones.add(new JLabel());
 
-        panel.add(panelInputs, BorderLayout.CENTER);
+        panel.add(panelInputs,  BorderLayout.CENTER);
         panel.add(panelBotones, BorderLayout.EAST);
 
         return panel;
@@ -103,12 +102,14 @@ public class GestionSimuladorUI extends JPanel {
         tabla.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         tabla.setGridColor(new Color(200, 200, 200));
 
-        JScrollPane scroll = new JScrollPane(tabla);
-        scroll.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);   // ← NUEVO
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // ← NUEVO
+        // ← scroll INTERNO de la tabla
+        JScrollPane scrollTabla = new JScrollPane(tabla);
+        scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        scrollTabla.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollTabla.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollTabla.setPreferredSize(new Dimension(0, 350)); // ← altura fija para la tabla
 
-        return scroll;
+        return scrollTabla;
     }
 
     private void calcularFrances() {
@@ -252,21 +253,19 @@ public class GestionSimuladorUI extends JPanel {
     }
 
     private LocalDate siguienteFecha(LocalDate fecha) {
-        boolean sabado = chkSabado.isSelected();
+        boolean sabado  = chkSabado.isSelected();
         boolean domingo = chkDomingo.isSelected();
         String forma = (String) cmbFormaPago.getSelectedItem();
 
         LocalDate siguiente;
         switch (forma) {
-            case "QUINCENAL": siguiente = fecha.plusDays(15); break;
-            case "SEMANAL":   siguiente = fecha.plusWeeks(1); break;
+            case "QUINCENAL": siguiente = fecha.plusDays(15);  break;
+            case "SEMANAL":   siguiente = fecha.plusWeeks(1);  break;
             default:          siguiente = fecha.plusMonths(1);
         }
 
-        if (!sabado && siguiente.getDayOfWeek().getValue() == 6)
-            siguiente = siguiente.plusDays(2);
-        if (!domingo && siguiente.getDayOfWeek().getValue() == 7)
-            siguiente = siguiente.plusDays(1);
+        if (!sabado  && siguiente.getDayOfWeek().getValue() == 6) siguiente = siguiente.plusDays(2);
+        if (!domingo && siguiente.getDayOfWeek().getValue() == 7) siguiente = siguiente.plusDays(1);
 
         return siguiente;
     }

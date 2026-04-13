@@ -46,8 +46,6 @@ public class ClienteControlador {
         Object[] fila = {cedula, nombre, telefono, email};
         vista.agregarFilaTabla(fila);
         
-        // ✅ NOTIFICAR A GESTIÓN DE PRÉSTAMOS
-        javaapplication1.vistas.GestionPrestamosUI.agregarClienteGlobal(nombre);
         
         vista.limpiarCampos();
         JOptionPane.showMessageDialog(vista, "✅ Cliente guardado exitosamente.", 
@@ -97,9 +95,6 @@ public class ClienteControlador {
         if (confirmacion == JOptionPane.YES_OPTION) {
             String nombreEliminado = (String) vista.getTableModel().getValueAt(filaSeleccionada, 1);
             vista.eliminarFilaTabla(filaSeleccionada);
-            
-            // ✅ NOTIFICAR A GESTIÓN DE PRÉSTAMOS
-            javaapplication1.vistas.GestionPrestamosUI.eliminarClienteGlobal(nombreEliminado);
             
             vista.limpiarCampos();
             JOptionPane.showMessageDialog(vista, "✅ Cliente eliminado exitosamente.", 

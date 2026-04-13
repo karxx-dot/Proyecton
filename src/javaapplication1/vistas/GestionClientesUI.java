@@ -25,9 +25,13 @@ public class GestionClientesUI extends JPanel {
     private static List<GestionPrestamosUI> observadores = new ArrayList<>();
 
     public GestionClientesUI() {
-        setSize(1000, 650);
-        setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(15, 15, 15, 15));
+    setLayout(new BorderLayout());
+    setBorder(new EmptyBorder(15, 15, 15, 15));
+    setBackground(Color.WHITE);
+
+    add(crearFormPanel(),   BorderLayout.NORTH);
+    add(crearTablePanel(),  BorderLayout.CENTER);
+    add(crearSearchPanel(), BorderLayout.SOUTH);
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -277,23 +281,28 @@ private void editarCliente() {
     }
 
     private JPanel crearTablePanel() {
-        JPanel tableContainer = new JPanel(new BorderLayout());
-        tableContainer.setBackground(Color.WHITE);
-        tableContainer.setBorder(new EmptyBorder(10, 0, 10, 0));
-        String[] columns = {"Cédula", "Nombre", "Teléfono", "Email"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override public boolean isCellEditable(int row, int col) { return false; }
-        };
-        dataTable = new JTable(tableModel);
-        dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        dataTable.setRowHeight(25);
-        dataTable.getTableHeader().setReorderingAllowed(false);
-        dataTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) cargarClienteSeleccionado();
-        });
-        tableContainer.add(new JScrollPane(dataTable), BorderLayout.CENTER);
-        return tableContainer;
-    }
+    JPanel tableContainer = new JPanel(new BorderLayout());
+    tableContainer.setBackground(Color.WHITE);
+    tableContainer.setBorder(new EmptyBorder(10, 0, 10, 0));
+    tableContainer.setMinimumSize(new java.awt.Dimension(0, 100)); // ← AGREGAR
+
+    String[] columns = {"Cédula", "Nombre", "Teléfono", "Email"};
+    tableModel = new DefaultTableModel(columns, 0) {
+        @Override public boolean isCellEditable(int row, int col) { return false; }
+    };
+    dataTable = new JTable(tableModel);
+    dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    dataTable.setRowHeight(25);
+    dataTable.getTableHeader().setReorderingAllowed(false);
+    dataTable.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting()) cargarClienteSeleccionado();
+    });
+
+    JScrollPane scroll = new JScrollPane(dataTable);
+    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // ← AGREGAR
+    tableContainer.add(scroll, BorderLayout.CENTER);
+    return tableContainer;
+}
 
     private JPanel crearSearchPanel() {
         JPanel container = new JPanel(new BorderLayout());

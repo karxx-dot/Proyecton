@@ -190,7 +190,65 @@ public class Registro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+    String nombre   = jTextField1.getText().trim(); // nombre real
+    String correo   = jTextField2.getText().trim(); // correo (validación visual)
+    String usuario  = jTextField4.getText().trim(); // nombre de usuario
+    String password = jTextField3.getText().trim(); // contraseña
+    String tipo     = jComboBox1.getSelectedItem().toString().trim();
+
+    // Validaciones
+    if (nombre.isEmpty() || correo.isEmpty() || usuario.isEmpty() || password.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "⚠️ Por favor completa todos los campos.",
+            "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    if (tipo.equals(" ")) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "⚠️ Selecciona un tipo de usuario válido.",
+            "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    if (password.length() < 6) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "⚠️ La contraseña debe tener al menos 6 caracteres.",
+            "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    if (usuario.length() < 4) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "⚠️ El nombre de usuario debe tener al menos 4 caracteres.",
+            "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try {
+        Union.LoginDAO dao = new Union.LoginDAO();
+        javaapplication1.modelo.Usuario u = new javaapplication1.modelo.Usuario(
+            nombre, usuario, password, tipo);
+        boolean ok = dao.registrar(u);
+
+        if (ok) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "✅ Usuario registrado exitosamente.\nYa puedes iniciar sesión.",
+                "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            new LoginForm().setVisible(true);
+            this.dispose();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "⚠️ El nombre de usuario ya existe. Elige otro.",
+                "Duplicado", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    } catch (java.sql.SQLException ex) {
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "❌ Error al registrar:\n" + ex.getMessage(),
+            "Error BD", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+
+    
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton1AncestorMoved(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jButton1AncestorMoved
