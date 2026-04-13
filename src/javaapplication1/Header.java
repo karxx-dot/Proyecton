@@ -26,7 +26,7 @@ public class Header extends javax.swing.JPanel {
     }
 private void initButtons() {
         jButton1.setText("✕");
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));  
         jButton1.setBackground(new java.awt.Color(220, 50, 50));
         jButton1.setBorderPainted(false);
         jButton1.setFocusPainted(false);

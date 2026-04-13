@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JFrame;
 
-public class menu extends javax.swing.JPanel {
+public class menu extends javax.swing.JPanel {  
   
    
     public menu() {
