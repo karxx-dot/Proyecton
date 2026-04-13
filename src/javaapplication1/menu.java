@@ -160,6 +160,11 @@ public void initMoving(JFrame fram) {
         }
     });
 }
+
+public ListMenu getListMenu() {
+    return listMenu1;
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javaapplication1.ListMenu<String> listMenu1;

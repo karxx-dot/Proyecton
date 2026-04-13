@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestionPrestamosUI extends JFrame {
+public class GestionPrestamosUI extends javax.swing.JPanel {
 
     private JComboBox<String> cbCliente;
     private JTextField txtMonto, txtTasa, txtPlazo, txtBuscar;
@@ -23,12 +23,10 @@ public class GestionPrestamosUI extends JFrame {
     private static List<GestionPrestamosUI> observadores = new ArrayList<>();
 
     public GestionPrestamosUI() {
-        setTitle("Gestión de Préstamos");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         setSize(1100, 700);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");

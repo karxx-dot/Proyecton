@@ -1,8 +1,11 @@
 
 package javaapplication1;
 
+import java.awt.CardLayout;
 import java.awt.Color;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 
 public class Main extends javax.swing.JFrame {
     
@@ -10,18 +13,43 @@ public class Main extends javax.swing.JFrame {
 
   
     public Main() {
-        initComponents();
-        setBackground(new Color (0,0,0,0));
-        menu3.initMoving(Main.this);
-           header2.setMenuToggleListener(() -> {
+    initComponents();
+    setBackground(new Color(0, 0, 0, 0));
+    form_Home1 = new javaapplication1.Form_Home();
+    menu3.initMoving(Main.this);
+    header2.setMenuToggleListener(() -> {
         menu3.toggleVisibility();
         panelBorder1.revalidate();
         panelBorder1.repaint();
     });
-       sp.setVerticalScrollBar(new JScrollBar());
+    initCardLayout();
+    sp.setVerticalScrollBar(new JScrollBar());
+    
+    setSize(1200, 700);     
     }
 
-   
+   private void initCardLayout() {
+    CardLayout card = new CardLayout();
+    JPanel panel = new JPanel(card);
+    panel.setOpaque(false);
+
+    Navegador.getInstance().init(panel, card);
+
+    // ← CAMBIAR ESTO
+    sp.setViewportView(panel);
+    sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+    menu3.getListMenu().setEventSelected(item -> {
+        // ← NUEVO: ocultar scroll del sp cuando es simulador
+        if (item.getName().equals("simulador")) {
+            sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        } else {
+            sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        }
+        Navegador.getInstance().irA(item.getName());
+    });
+}
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

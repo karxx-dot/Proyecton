@@ -237,14 +237,18 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_contraActionPerformed
 
     private void IniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarActionPerformed
-        // TODO add your handling code here:
-            String user = usuario.getText();
+    String user = usuario.getText();
     String pass = contra.getText();
     
+    System.out.println("Usuario: " + user);
+    System.out.println("Password: " + pass);
+    
     if (user.equals("oniel") && pass.equals("1234")) {
+        System.out.println("Abriendo Main...");
         new javaapplication1.Main().setVisible(true);
         this.dispose();
     } else {
+        System.out.println("Credenciales incorrectas");
         javax.swing.JOptionPane.showMessageDialog(this, 
             "Usuario o contraseña incorrectos", 
             "Error", 

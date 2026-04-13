@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestionCuotasUI extends JFrame {
+public class GestionCuotasUI extends javax.swing.JPanel {
 
     private JComboBox<String> cbPrestamo;
     private JTextField txtNumeroCuota, txtMonto, txtFechaPago, txtEstado, txtBuscar;
@@ -21,12 +21,10 @@ public class GestionCuotasUI extends JFrame {
     private static List<GestionCuotasUI> observadores = new ArrayList<>();
 
     public GestionCuotasUI() {
-        setTitle("Gestión de Cuotas/Pagos");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         setSize(1100, 700);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");

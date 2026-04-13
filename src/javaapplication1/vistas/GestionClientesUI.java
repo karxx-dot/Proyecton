@@ -7,10 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import Union.Conexion;
-import java.sql.*;
 
-public class GestionClientesUI extends JFrame {
+public class GestionClientesUI extends JPanel {
 
     private JTextField txtCedula, txtNombre, txtTelefono, txtEmail, txtBuscar;
     private JButton btnGuardar, btnEditar, btnEliminar, btnLupa, btnLimpiar, btnNuevo;
@@ -22,13 +20,10 @@ public class GestionClientesUI extends JFrame {
     private static List<GestionPrestamosUI> observadores = new ArrayList<>();
 
     public GestionClientesUI() {
-        setTitle("Gestión de Clientes");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         setSize(1000, 650);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
-        
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
         // Aplicar Look & Feel Nimbus
         try {
@@ -43,7 +38,6 @@ public class GestionClientesUI extends JFrame {
         add(crearSearchPanel(), BorderLayout.SOUTH);
         
         // Inicializar controlador
-        
         inicializarControlador();
     }
 

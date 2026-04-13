@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class GestionUsuariosUI extends JFrame {
+public class GestionUsuariosUI extends javax.swing.JPanel {
 
     private JTextField txtUsuario, txtRol, txtBuscar;
     private JPasswordField txtPassword;
@@ -15,12 +15,10 @@ public class GestionUsuariosUI extends JFrame {
     private DefaultTableModel tableModel;
 
     public GestionUsuariosUI() {
-        setTitle("Gestión de Usuarios");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         setSize(1000, 650);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
         // Aplicar Look & Feel Nimbus
         try {

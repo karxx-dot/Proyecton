@@ -13,7 +13,7 @@ public class Form_Home extends javax.swing.JPanel {
   
     public Form_Home() {
         initComponents();
-        card1.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "texto", "texto", "texto"));
+        card1.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "Cantidad a devolver", "80.000$", "texto"));
 card2.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "Texto", "texto", "texto"));
 card3.setData(new Model_Card(new ImageIcon(getClass().getResource("")), "texto", "texto", "texto"));
     //AGREGAR LAS TABLAS 
@@ -60,10 +60,13 @@ table.addRow(new Object[]{"Kevin Pietersen", "kevinpietersen@gmail.com", "client
         panel.add(card3);
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
+        panelBorder1.setPreferredSize(new java.awt.Dimension(740, 780));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(127, 127, 127));
         jLabel1.setText("tabla de usuarios");
+
+        spTable.setPreferredSize(new java.awt.Dimension(740, 700));
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -90,16 +93,20 @@ table.addRow(new Object[]{"Kevin Pietersen", "kevinpietersen@gmail.com", "client
             .addGroup(panelBorder1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
+                .addContainerGap(575, Short.MAX_VALUE))
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panelBorder1Layout.setVerticalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel1)
-                .addGap(0, 0, 0)
-                .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -118,9 +125,9 @@ table.addRow(new Object[]{"Kevin Pietersen", "kevinpietersen@gmail.com", "client
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(423, 423, 423))
         );
     }// </editor-fold>//GEN-END:initComponents
 
