@@ -239,6 +239,7 @@ public class LoginForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_contraActionPerformed
 
+    
     private void IniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarActionPerformed
   String user = usuario.getText();
 String pass = contra.getText();
@@ -265,6 +266,7 @@ try {
 }
     }//GEN-LAST:event_IniciarActionPerformed
 
+    
 
     private void registrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarseActionPerformed
         // TODO add your handling code here:
