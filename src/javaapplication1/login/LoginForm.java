@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package javaapplication1.login;
+
+import Union.LoginDAO;
+
 /**
  *
  * @author oniel
@@ -236,26 +239,34 @@ public class LoginForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_contraActionPerformed
 
+    
     private void IniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IniciarActionPerformed
-    String user = usuario.getText();
-    String pass = contra.getText();
-    
-    System.out.println("Usuario: " + user);
-    System.out.println("Password: " + pass);
-    
-    if (user.equals("oniel") && pass.equals("1234")) {
+  String user = usuario.getText();
+String pass = contra.getText();
+String tipo = Tipo.getSelectedItem().toString();
+
+LoginDAO dao = new LoginDAO();
+try {
+    if (dao.validar(user, pass, tipo)) {
         System.out.println("Abriendo Main...");
         new javaapplication1.Main().setVisible(true);
         this.dispose();
     } else {
         System.out.println("Credenciales incorrectas");
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Usuario o contraseña incorrectos", 
-            "Error", 
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "Usuario o contraseña incorrectos",
+            "Error",
             javax.swing.JOptionPane.ERROR_MESSAGE);
     }
+} catch (SQLException e) {
+    javax.swing.JOptionPane.showMessageDialog(this,
+        "Error al iniciar sesión: " + e.getMessage(),
+        "Error",
+        javax.swing.JOptionPane.ERROR_MESSAGE);
+}
     }//GEN-LAST:event_IniciarActionPerformed
 
+    
 
     private void registrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarseActionPerformed
         // TODO add your handling code here:
